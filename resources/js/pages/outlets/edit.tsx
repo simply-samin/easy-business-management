@@ -1,9 +1,23 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import OutletForm from '@/components/outlet-form';
-import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+
+type Outlet = {
+    id: number;
+    name: string;
+    code: string | null;
+    mobile: string;
+    email: string | null;
+    outlet_type: string | null;
+    address_line: string | null;
+    district: string | null;
+    area_type: string | null;
+    area_name: string | null;
+    postal_code: string | null;
+    status: string;
+};
 
 export default function OutletsEdit({
     business,
@@ -13,20 +27,7 @@ export default function OutletsEdit({
     areaTypeOptions,
 }: {
     business: { id: number; name: string };
-    outlet: {
-        id: number;
-        name: string;
-        code: string | null;
-        mobile: string;
-        email: string | null;
-        outlet_type: string | null;
-        address_line: string | null;
-        district: string | null;
-        area_type: string | null;
-        area_name: string | null;
-        postal_code: string | null;
-        status: string;
-    };
+    outlet: Outlet;
     outletTypeOptions: Array<{ label: string; value: string }>;
     statusOptions: Array<{ label: string; value: string }>;
     areaTypeOptions: Array<{ label: string; value: string }>;
@@ -44,24 +45,19 @@ export default function OutletsEdit({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Outlet" />
 
-            <div className="space-y-6 p-4">
-                <Heading
-                    title={`Edit ${outlet.name}`}
-                    description={`Update the outlet record for ${business.name}.`}
-                />
+            <div className="px-4 py-6">
+                <div className="mx-auto max-w-4xl space-y-6">
+                    <Heading title="Edit Outlet" />
 
-                <Card className="border-none bg-transparent p-0 shadow-none">
-                    <CardContent className="px-0">
-                        <OutletForm
-                            business={business}
-                            outlet={outlet}
-                            outletTypeOptions={outletTypeOptions}
-                            statusOptions={statusOptions}
-                            areaTypeOptions={areaTypeOptions}
-                            cancelHref={`/businesses/${business.id}`}
-                        />
-                    </CardContent>
-                </Card>
+                    <OutletForm
+                        business={business}
+                        outlet={outlet}
+                        outletTypeOptions={outletTypeOptions}
+                        statusOptions={statusOptions}
+                        areaTypeOptions={areaTypeOptions}
+                        cancelHref={`/businesses/${business.id}`}
+                    />
+                </div>
             </div>
         </AppLayout>
     );

@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import OutletForm from '@/components/outlet-form';
-import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -29,23 +28,18 @@ export default function OutletsCreate({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Outlet" />
 
-            <div className="space-y-6 p-4">
-                <Heading
-                    title={`Create Outlet for ${business.name}`}
-                    description="Add a branch, shopfront, office, warehouse, or online outlet under this business."
-                />
+            <div className="px-4 py-6">
+                <div className="mx-auto max-w-4xl space-y-6">
+                    <Heading title="Create Outlet" />
 
-                <Card className="border-none bg-transparent p-0 shadow-none">
-                    <CardContent className="px-0">
-                        <OutletForm
-                            business={business}
-                            outletTypeOptions={outletTypeOptions}
-                            statusOptions={statusOptions}
-                            areaTypeOptions={areaTypeOptions}
-                            cancelHref={`/businesses/${business.id}`}
-                        />
-                    </CardContent>
-                </Card>
+                    <OutletForm
+                        business={business}
+                        outletTypeOptions={outletTypeOptions}
+                        statusOptions={statusOptions}
+                        areaTypeOptions={areaTypeOptions}
+                        cancelHref={`/businesses/${business.id}`}
+                    />
+                </div>
             </div>
         </AppLayout>
     );

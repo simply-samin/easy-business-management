@@ -1,4 +1,3 @@
 [mcp_servers.laravel-boost]
 command = "php"
 args = ["artisan", "boost:mcp"]
-cwd = "/home/samiul-402/projects/laravel/easy-manage"
