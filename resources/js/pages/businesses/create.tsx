@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import BusinessForm from './form';
 import type { Option } from './types';
+import { index, create } from '@/routes/businesses';
 
 export default function BusinessesCreate({
     businessTypeOptions,
@@ -15,8 +16,8 @@ export default function BusinessesCreate({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: '/businesses' },
-        { title: 'Create', href: '/businesses/create' },
+        { title: 'Businesses', href: index.url() },
+        { title: 'Create', href: create.url() },
     ];
 
     return (
@@ -31,7 +32,7 @@ export default function BusinessesCreate({
                         businessTypeOptions={businessTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref="/businesses"
+                        cancelHref={index.url()}
                     />
                 </div>
             </div>

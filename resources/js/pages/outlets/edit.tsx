@@ -1,23 +1,11 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
-import OutletForm from '@/components/outlet-form';
 import AppLayout from '@/layouts/app-layout';
+import { index, show } from '@/routes/businesses';
+import { edit } from '@/routes/businesses/outlets';
 import type { BreadcrumbItem } from '@/types';
-
-type Outlet = {
-    id: number;
-    name: string;
-    code: string | null;
-    mobile: string;
-    email: string | null;
-    outlet_type: string | null;
-    address_line: string | null;
-    district: string | null;
-    area_type: string | null;
-    area_name: string | null;
-    postal_code: string | null;
-    status: string;
-};
+import OutletForm from './form';
+import type { BusinessContext, Option, Outlet } from './types';
 
 export default function OutletsEdit({
     business,
@@ -26,18 +14,18 @@ export default function OutletsEdit({
     statusOptions,
     areaTypeOptions,
 }: {
-    business: { id: number; name: string };
+    business: BusinessContext;
     outlet: Outlet;
-    outletTypeOptions: Array<{ label: string; value: string }>;
-    statusOptions: Array<{ label: string; value: string }>;
-    areaTypeOptions: Array<{ label: string; value: string }>;
+    outletTypeOptions: Option[];
+    statusOptions: Option[];
+    areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: '/businesses' },
-        { title: business.name, href: `/businesses/${business.id}` },
+        { title: 'Businesses', href: index.url() },
+        { title: business.name, href: show.url(business.id) },
         {
             title: 'Edit Outlet',
-            href: `/businesses/${business.id}/outlets/${outlet.id}/edit`,
+            href: edit.url({ business, outlet }),
         },
     ];
 
@@ -55,7 +43,7 @@ export default function OutletsEdit({
                         outletTypeOptions={outletTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={`/businesses/${business.id}`}
+                        cancelHref={show.url(business.id)}
                     />
                 </div>
             </div>

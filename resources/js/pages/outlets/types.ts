@@ -3,16 +3,18 @@ type Option = {
     value: string;
 };
 
-type Business = {
+type BusinessContext = {
     id: number;
     name: string;
-    trade_name: string | null;
-    business_type: string;
+};
+
+type Outlet = {
+    id: number;
+    name: string;
+    code: string | null;
     mobile: string;
     email: string | null;
-    trade_license_no: string | null;
-    tin_no: string | null;
-    bin_no: string | null;
+    outlet_type: string | null;
     address_line: string | null;
     district: string | null;
     area_type: string | null;
@@ -21,4 +23,4 @@ type Business = {
     status: string;
 };
 
-export type { Option, Business };
+export type { BusinessContext, Option, Outlet };

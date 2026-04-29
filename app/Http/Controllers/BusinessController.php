@@ -10,10 +10,8 @@ use App\Enums\OutletType;
 use App\Http\Requests\StoreBusinessRequest;
 use App\Http\Requests\UpdateBusinessRequest;
 use App\Models\Business;
-use BackedEnum;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -67,9 +65,9 @@ class BusinessController extends Controller
     public function create(): Response
     {
         return Inertia::render('businesses/create', [
-            'businessTypeOptions' => $this->enumOptions(BusinessType::class),
-            'statusOptions' => $this->enumOptions(BusinessStatus::class),
-            'areaTypeOptions' => $this->enumOptions(AreaType::class),
+            'businessTypeOptions' => BusinessType::options(),
+            'statusOptions' => BusinessStatus::options(),
+            'areaTypeOptions' => AreaType::options(),
         ]);
     }
 
@@ -95,9 +93,9 @@ class BusinessController extends Controller
 
         return Inertia::render('businesses/show', [
             'business' => $business,
-            'outletTypeOptions' => $this->enumOptions(OutletType::class),
-            'outletStatusOptions' => $this->enumOptions(OutletStatus::class),
-            'areaTypeOptions' => $this->enumOptions(AreaType::class),
+            'outletTypeOptions' => OutletType::options(),
+            'outletStatusOptions' => OutletStatus::options(),
+            'areaTypeOptions' => AreaType::options(),
         ]);
     }
 
@@ -108,9 +106,9 @@ class BusinessController extends Controller
     {
         return Inertia::render('businesses/edit', [
             'business' => $business,
-            'businessTypeOptions' => $this->enumOptions(BusinessType::class),
-            'statusOptions' => $this->enumOptions(BusinessStatus::class),
-            'areaTypeOptions' => $this->enumOptions(AreaType::class),
+            'businessTypeOptions' => BusinessType::options(),
+            'statusOptions' => BusinessStatus::options(),
+            'areaTypeOptions' => AreaType::options(),
         ]);
     }
 
@@ -140,22 +138,5 @@ class BusinessController extends Controller
 
         return to_route('businesses.index')
             ->with('status', 'Business deleted successfully.');
-    }
-
-    /**
-     * Transform enum cases into frontend-friendly option arrays.
-     *
-     * @param  class-string<BackedEnum>  $enumClass
-     * @return array<int, array{label: string, value: string}>
-     */
-    private function enumOptions(string $enumClass): array
-    {
-        return array_map(
-            fn (BackedEnum $case): array => [
-                'label' => Str::headline($case->value),
-                'value' => $case->value,
-            ],
-            $enumClass::cases(),
-        );
     }
 }

@@ -1,9 +1,12 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import { Eye } from 'lucide-react';
 import BusinessForm from './form';
 import type { Business, Option } from './types';
+import { index, edit, show } from '@/routes/businesses';
 
 export default function BusinessesEdit({
     business,
@@ -17,8 +20,8 @@ export default function BusinessesEdit({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: '/businesses' },
-        { title: 'Edit', href: `/businesses/${business.id}/edit` },
+        { title: 'Businesses', href: index.url() },
+        { title: business.name, href: edit.url(business.id) },
     ];
 
     return (
@@ -27,14 +30,23 @@ export default function BusinessesEdit({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <Heading title="Edit Business" />
+                    <div className="flex items-start justify-between gap-4">
+                        <Heading title="Edit Business" />
+
+                        <Button variant="outline" asChild>
+                            <Link href={show.url(business.id)}>
+                                <Eye />
+                                View
+                            </Link>
+                        </Button>
+                    </div>
 
                     <BusinessForm
                         business={business}
                         businessTypeOptions={businessTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={`/businesses/${business.id}`}
+                        cancelHref={edit.url(business.id)}
                     />
                 </div>
             </div>

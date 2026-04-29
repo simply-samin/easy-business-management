@@ -119,10 +119,11 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 === tests rules ===
 
-# Test Enforcement
+# Testing
 
-- Only create or update tests when the user explicitly asks for tests.
-- When tests are requested, run the minimum number of relevant tests needed to verify the requested behavior. Use `php artisan test --compact` with a specific filename or filter.
+- Only write or modify tests when explicitly requested by the user. Do not write, run, or suggest tests unless the prompt asks for them.
+- When tests are not requested, suggest manual verification: `npm run dev` (UI), `browser-logs` (JS errors), `last-error` (backend exceptions), `php artisan route:list` (routes), or `php artisan tinker` (logic checks).
+- When tests are requested, use `php artisan test --compact` with a specific filename or filter.
 
 === inertia-laravel/core rules ===
 

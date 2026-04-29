@@ -1,7 +1,7 @@
 import { Form, Link } from '@inertiajs/react';
 import { Save, X } from 'lucide-react';
 import { useState } from 'react';
-import BusinessController from '@/actions/App/Http/Controllers/BusinessController';
+import OutletController from '@/actions/App/Http/Controllers/OutletController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,33 +14,33 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { Business, Option } from './types';
+import type { BusinessContext, Option, Outlet } from './types';
 
-export default function BusinessForm({
+export default function OutletForm({
     business,
-    businessTypeOptions,
+    outlet,
+    outletTypeOptions,
     statusOptions,
     areaTypeOptions,
     cancelHref,
 }: {
-    business?: Business;
-    businessTypeOptions: Option[];
+    business: BusinessContext;
+    outlet?: Outlet;
+    outletTypeOptions: Option[];
     statusOptions: Option[];
     areaTypeOptions: Option[];
     cancelHref: string;
 }) {
-    const [businessType, setBusinessType] = useState(
-        business?.business_type ?? '',
-    );
-    const [status, setStatus] = useState(business?.status ?? 'active');
-    const [areaType, setAreaType] = useState(business?.area_type ?? '');
+    const [outletType, setOutletType] = useState(outlet?.outlet_type ?? '');
+    const [status, setStatus] = useState(outlet?.status ?? 'active');
+    const [areaType, setAreaType] = useState(outlet?.area_type ?? '');
 
     return (
         <Form
             action={
-                business
-                    ? BusinessController.update(business)
-                    : BusinessController.store()
+                outlet
+                    ? OutletController.update({ business, outlet })
+                    : OutletController.store({ business })
             }
             options={{ preserveScroll: true }}
             disableWhileProcessing
@@ -50,7 +50,7 @@ export default function BusinessForm({
                 <div className="space-y-6">
                     <div>
                         <div className="mb-3 text-base font-medium">
-                            Business details
+                            Outlet details
                         </div>
                         <div className="flex flex-col gap-7">
                             <div className="flex flex-col gap-2">
@@ -58,15 +58,15 @@ export default function BusinessForm({
                                     htmlFor="name"
                                     className="text-sm font-medium"
                                 >
-                                    Business name{' '}
+                                    Outlet name{' '}
                                     <span className="text-red-500">*</span>
                                 </label>
                                 <Input
                                     id="name"
                                     name="name"
-                                    defaultValue={business?.name ?? ''}
+                                    defaultValue={outlet?.name ?? ''}
                                     aria-invalid={Boolean(errors.name)}
-                                    placeholder="Rahman Trading Co."
+                                    placeholder="Banani Branch"
                                 />
                                 <InputError message={errors.name} />
                             </div>
@@ -74,68 +74,59 @@ export default function BusinessForm({
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="flex flex-col gap-2">
                                     <label
-                                        htmlFor="trade_name"
+                                        htmlFor="code"
                                         className="text-sm font-medium"
                                     >
-                                        Trade name
+                                        Outlet code
                                     </label>
                                     <Input
-                                        id="trade_name"
-                                        name="trade_name"
-                                        defaultValue={
-                                            business?.trade_name ?? ''
-                                        }
-                                        aria-invalid={Boolean(
-                                            errors.trade_name,
-                                        )}
-                                        placeholder="Rahman Mart"
+                                        id="code"
+                                        name="code"
+                                        defaultValue={outlet?.code ?? ''}
+                                        aria-invalid={Boolean(errors.code)}
+                                        placeholder="BAN-01"
                                     />
-                                    <InputError message={errors.trade_name} />
+                                    <InputError message={errors.code} />
                                 </div>
 
                                 <div className="flex flex-col gap-2">
                                     <label
-                                        htmlFor="business_type"
+                                        htmlFor="outlet_type"
                                         className="text-sm font-medium"
                                     >
-                                        Business type{' '}
-                                        <span className="text-red-500">*</span>
+                                        Outlet type
                                     </label>
                                     <input
                                         type="hidden"
-                                        name="business_type"
-                                        value={businessType}
+                                        name="outlet_type"
+                                        value={outletType}
                                         readOnly
                                     />
                                     <Select
-                                        value={businessType}
-                                        onValueChange={setBusinessType}
+                                        value={outletType}
+                                        onValueChange={setOutletType}
                                     >
                                         <SelectTrigger
-                                            id="business_type"
+                                            id="outlet_type"
                                             className="w-full"
                                             aria-invalid={Boolean(
-                                                errors.business_type,
+                                                errors.outlet_type,
                                             )}
                                         >
-                                            <SelectValue placeholder="Select business type" />
+                                            <SelectValue placeholder="Select outlet type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {businessTypeOptions.map(
-                                                (option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                ),
-                                            )}
+                                            {outletTypeOptions.map((option) => (
+                                                <SelectItem
+                                                    key={option.value}
+                                                    value={option.value}
+                                                >
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
-                                    <InputError
-                                        message={errors.business_type}
-                                    />
+                                    <InputError message={errors.outlet_type} />
                                 </div>
                             </div>
 
@@ -203,7 +194,7 @@ export default function BusinessForm({
                                 <Input
                                     id="mobile"
                                     name="mobile"
-                                    defaultValue={business?.mobile ?? ''}
+                                    defaultValue={outlet?.mobile ?? ''}
                                     aria-invalid={Boolean(errors.mobile)}
                                     placeholder="01XXXXXXXXX"
                                 />
@@ -221,75 +212,11 @@ export default function BusinessForm({
                                     id="email"
                                     name="email"
                                     type="email"
-                                    defaultValue={business?.email ?? ''}
+                                    defaultValue={outlet?.email ?? ''}
                                     aria-invalid={Boolean(errors.email)}
-                                    placeholder="hello@business.com"
+                                    placeholder="branch@example.com"
                                 />
                                 <InputError message={errors.email} />
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr className="my-2 border-t" />
-
-                    <div>
-                        <div className="mb-3 text-base font-medium">
-                            Registration
-                        </div>
-
-                        <div className="flex flex-col gap-7">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="trade_license_no"
-                                    className="text-sm font-medium"
-                                >
-                                    Trade license no.
-                                </label>
-                                <Input
-                                    id="trade_license_no"
-                                    name="trade_license_no"
-                                    defaultValue={
-                                        business?.trade_license_no ?? ''
-                                    }
-                                    aria-invalid={Boolean(
-                                        errors.trade_license_no,
-                                    )}
-                                />
-                                <InputError message={errors.trade_license_no} />
-                            </div>
-
-                            <div className="grid gap-4 md:grid-cols-2">
-                                <div className="flex flex-col gap-2">
-                                    <label
-                                        htmlFor="tin_no"
-                                        className="text-sm font-medium"
-                                    >
-                                        TIN no.
-                                    </label>
-                                    <Input
-                                        id="tin_no"
-                                        name="tin_no"
-                                        defaultValue={business?.tin_no ?? ''}
-                                        aria-invalid={Boolean(errors.tin_no)}
-                                    />
-                                    <InputError message={errors.tin_no} />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <label
-                                        htmlFor="bin_no"
-                                        className="text-sm font-medium"
-                                    >
-                                        BIN no.
-                                    </label>
-                                    <Input
-                                        id="bin_no"
-                                        name="bin_no"
-                                        defaultValue={business?.bin_no ?? ''}
-                                        aria-invalid={Boolean(errors.bin_no)}
-                                    />
-                                    <InputError message={errors.bin_no} />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -312,9 +239,9 @@ export default function BusinessForm({
                                 <Textarea
                                     id="address_line"
                                     name="address_line"
-                                    defaultValue={business?.address_line ?? ''}
+                                    defaultValue={outlet?.address_line ?? ''}
                                     aria-invalid={Boolean(errors.address_line)}
-                                    placeholder="House, road, market, village or landmark"
+                                    placeholder="House, road, market or landmark"
                                     className="min-h-28 resize-none"
                                 />
                                 <InputError message={errors.address_line} />
@@ -331,7 +258,7 @@ export default function BusinessForm({
                                     <Input
                                         id="district"
                                         name="district"
-                                        defaultValue={business?.district ?? ''}
+                                        defaultValue={outlet?.district ?? ''}
                                         aria-invalid={Boolean(errors.district)}
                                         placeholder="Dhaka"
                                     />
@@ -348,13 +275,11 @@ export default function BusinessForm({
                                     <Input
                                         id="postal_code"
                                         name="postal_code"
-                                        defaultValue={
-                                            business?.postal_code ?? ''
-                                        }
+                                        defaultValue={outlet?.postal_code ?? ''}
                                         aria-invalid={Boolean(
                                             errors.postal_code,
                                         )}
-                                        placeholder="1212"
+                                        placeholder="1213"
                                     />
                                     <InputError message={errors.postal_code} />
                                 </div>
@@ -432,12 +357,12 @@ export default function BusinessForm({
                                     <Input
                                         id="area_name"
                                         name="area_name"
-                                        defaultValue={business?.area_name ?? ''}
+                                        defaultValue={outlet?.area_name ?? ''}
                                         aria-invalid={Boolean(errors.area_name)}
                                         placeholder={
                                             areaType === 'thana'
-                                                ? 'Motijheel'
-                                                : 'Savar'
+                                                ? 'Gulshan'
+                                                : 'Keraniganj'
                                         }
                                     />
                                     <InputError message={errors.area_name} />
@@ -457,9 +382,9 @@ export default function BusinessForm({
                             <Save />
                             {processing
                                 ? 'Saving...'
-                                : business
-                                  ? 'Update Business'
-                                  : 'Create Business'}
+                                : outlet
+                                  ? 'Update Outlet'
+                                  : 'Create Outlet'}
                         </Button>
                     </div>
                 </div>

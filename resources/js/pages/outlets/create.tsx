@@ -1,8 +1,11 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
-import OutletForm from '@/components/outlet-form';
 import AppLayout from '@/layouts/app-layout';
+import { index, show } from '@/routes/businesses';
+import { create } from '@/routes/businesses/outlets';
 import type { BreadcrumbItem } from '@/types';
+import OutletForm from './form';
+import type { BusinessContext, Option } from './types';
 
 export default function OutletsCreate({
     business,
@@ -10,17 +13,17 @@ export default function OutletsCreate({
     statusOptions,
     areaTypeOptions,
 }: {
-    business: { id: number; name: string };
-    outletTypeOptions: Array<{ label: string; value: string }>;
-    statusOptions: Array<{ label: string; value: string }>;
-    areaTypeOptions: Array<{ label: string; value: string }>;
+    business: BusinessContext;
+    outletTypeOptions: Option[];
+    statusOptions: Option[];
+    areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: '/businesses' },
-        { title: business.name, href: `/businesses/${business.id}` },
+        { title: 'Businesses', href: index.url() },
+        { title: business.name, href: show.url(business.id) },
         {
             title: 'Create Outlet',
-            href: `/businesses/${business.id}/outlets/create`,
+            href: create.url(business.id),
         },
     ];
 
@@ -37,7 +40,7 @@ export default function OutletsCreate({
                         outletTypeOptions={outletTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={`/businesses/${business.id}`}
+                        cancelHref={show.url(business.id)}
                     />
                 </div>
             </div>
