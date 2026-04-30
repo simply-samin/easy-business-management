@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\AreaType;
-use App\Enums\BusinessStatus;
 use App\Enums\BusinessType;
+use App\Enums\RecordStatus;
 use App\Models\Business;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -36,7 +36,7 @@ class BusinessFactory extends Factory
             'area_type' => fake()->optional()->randomElement(AreaType::cases()),
             'area_name' => fake()->optional()->citySuffix(),
             'postal_code' => fake()->optional()->postcode(),
-            'status' => fake()->randomElement(BusinessStatus::cases()),
+            'status' => fake()->randomElement(RecordStatus::cases()),
         ];
     }
 }

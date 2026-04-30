@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\AreaType;
-use App\Enums\OutletStatus;
 use App\Enums\OutletType;
+use App\Enums\RecordStatus;
 use App\Models\Business;
 use App\Models\Outlet;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -35,7 +35,7 @@ class OutletFactory extends Factory
             'area_type' => fake()->optional()->randomElement(AreaType::cases()),
             'area_name' => fake()->optional()->citySuffix(),
             'postal_code' => fake()->optional()->postcode(),
-            'status' => fake()->randomElement(OutletStatus::cases()),
+            'status' => fake()->randomElement(RecordStatus::cases()),
         ];
     }
 }

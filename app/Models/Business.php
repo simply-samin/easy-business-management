@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AreaType;
-use App\Enums\BusinessStatus;
 use App\Enums\BusinessType;
+use App\Enums\RecordStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Business extends Model
 {
@@ -46,7 +46,7 @@ class Business extends Model
         return [
             'business_type' => BusinessType::class,
             'area_type' => AreaType::class,
-            'status' => BusinessStatus::class,
+            'status' => RecordStatus::class,
         ];
     }
 
@@ -58,5 +58,65 @@ class Business extends Model
     public function outlets(): HasMany
     {
         return $this->hasMany(Outlet::class);
+    }
+
+    /**
+     * Get the product categories for the business.
+     *
+     * @return HasMany<ProductCategory, $this>
+     */
+    public function productCategories(): HasMany
+    {
+        return $this->hasMany(ProductCategory::class);
+    }
+
+    /**
+     * Get the products for the business.
+     *
+     * @return HasMany<Product, $this>
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Get the parties for the business.
+     *
+     * @return HasMany<Party, $this>
+     */
+    public function parties(): HasMany
+    {
+        return $this->hasMany(Party::class);
+    }
+
+    /**
+     * Get the purchases for the business.
+     *
+     * @return HasMany<Purchase, $this>
+     */
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    /**
+     * Get the product stock ledgers for the business.
+     *
+     * @return HasMany<ProductStockLedger, $this>
+     */
+    public function productStockLedgers(): HasMany
+    {
+        return $this->hasMany(ProductStockLedger::class);
+    }
+
+    /**
+     * Get the product stocks for the business.
+     *
+     * @return HasMany<ProductStock, $this>
+     */
+    public function productStocks(): HasMany
+    {
+        return $this->hasMany(ProductStock::class);
     }
 }

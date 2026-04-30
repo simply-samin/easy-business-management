@@ -2,16 +2,18 @@
 
 namespace App\Enums;
 
-enum BusinessStatus: string
+enum OpeningBalanceType: string
 {
-    case Active = 'active';
-    case Inactive = 'inactive';
+    case None = 'none';
+    case Receivable = 'receivable';
+    case Payable = 'payable';
 
     public function label(): string
     {
         return match ($this) {
-            self::Active => 'Active',
-            self::Inactive => 'Inactive',
+            self::None => 'None',
+            self::Receivable => 'Receivable',
+            self::Payable => 'Payable',
         };
     }
 

@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+class PurchaseItem extends Model
+{
+    /** @use HasFactory<\Database\Factories\PurchaseItemFactory> */
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'purchase_id',
+        'product_id',
+        'unit_of_measurement_id',
+        'product_unit_conversion_id',
+        'quantity',
+        'base_quantity',
+        'unit_cost',
+        'base_unit_cost',
+        'discount_amount',
+        'line_total',
+        'note',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'quantity' => 'decimal:4',
+            'base_quantity' => 'decimal:4',
+            'unit_cost' => 'decimal:2',
+            'base_unit_cost' => 'decimal:6',
+            'discount_amount' => 'decimal:2',
+            'line_total' => 'decimal:2',
+        ];
+    }
+
+    /**
+     * Get the purchase that owns the item.
+     *
+     * @return BelongsTo<Purchase, $this>
+     */
+    public function purchase(): BelongsTo
+    {
+        return $this->belongsTo(Purchase::class);
+    }
+
+    /**
+     * Get the product for the item.
+     *
+     * @return BelongsTo<Product, $this>
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the unit of measurement for the item.
+     *
+     * @return BelongsTo<UnitOfMeasurement, $this>
+     */
+    public function unitOfMeasurement(): BelongsTo
+    {
+        return $this->belongsTo(UnitOfMeasurement::class);
+    }
+
+    /**
+     * Get the product unit conversion for the item.
+     *
+     * @return BelongsTo<ProductUnitConversion, $this>
+     */
+    public function productUnitConversion(): BelongsTo
+    {
+        return $this->belongsTo(ProductUnitConversion::class);
+    }
+
+    /**
+     * Get the product stock ledgers that reference this purchase item.
+     *
+     * @return MorphMany<ProductStockLedger, $this>
+     */
+    public function productStockLedgers(): MorphMany
+    {
+        return $this->morphMany(ProductStockLedger::class, 'source');
+    }
+}

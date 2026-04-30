@@ -2,16 +2,18 @@
 
 namespace App\Enums;
 
-enum OutletStatus: string
+enum PurchasePaymentStatus: string
 {
-    case Active = 'active';
-    case Inactive = 'inactive';
+    case Unpaid = 'unpaid';
+    case Partial = 'partial';
+    case Paid = 'paid';
 
     public function label(): string
     {
         return match ($this) {
-            self::Active => 'Active',
-            self::Inactive => 'Inactive',
+            self::Unpaid => 'Unpaid',
+            self::Partial => 'Partial',
+            self::Paid => 'Paid',
         };
     }
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -32,6 +33,34 @@ return new class extends Migration
             $table->index('name');
             $table->index('mobile');
         });
+
+        $this->seed();
+    }
+
+    private function seed(): void
+    {
+        $now = now();
+
+        DB::table('businesses')->insert([
+            [
+                'name' => 'Arambag Paper House',
+                'trade_name' => 'Arambag Paper House',
+                'business_type' => 'sole_proprietorship',
+                'mobile' => '01711111111',
+                'email' => null,
+                'trade_license_no' => null,
+                'tin_no' => null,
+                'bin_no' => null,
+                'address_line' => null,
+                'district' => null,
+                'area_type' => null,
+                'area_name' => null,
+                'postal_code' => null,
+                'status' => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
     }
 
     /**

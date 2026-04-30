@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AreaType;
-use App\Enums\OutletStatus;
 use App\Enums\OutletType;
+use App\Enums\RecordStatus;
 use App\Http\Requests\StoreOutletRequest;
 use App\Http\Requests\UpdateOutletRequest;
 use App\Models\Business;
@@ -25,7 +25,7 @@ class OutletController extends Controller
         return Inertia::render('outlets/create', [
             'business' => $business,
             'outletTypeOptions' => $this->enumOptions(OutletType::class),
-            'statusOptions' => $this->enumOptions(OutletStatus::class),
+            'statusOptions' => RecordStatus::options(),
             'areaTypeOptions' => $this->enumOptions(AreaType::class),
         ]);
     }
@@ -50,7 +50,7 @@ class OutletController extends Controller
             'business' => $business,
             'outlet' => $outlet,
             'outletTypeOptions' => $this->enumOptions(OutletType::class),
-            'statusOptions' => $this->enumOptions(OutletStatus::class),
+            'statusOptions' => RecordStatus::options(),
             'areaTypeOptions' => $this->enumOptions(AreaType::class),
         ]);
     }

@@ -3,8 +3,8 @@
 namespace App\Concerns;
 
 use App\Enums\AreaType;
-use App\Enums\BusinessStatus;
 use App\Enums\BusinessType;
+use App\Enums\RecordStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
@@ -31,7 +31,7 @@ trait BusinessValidationRules
             'area_type' => ['nullable', Rule::enum(AreaType::class), 'required_with:area_name'],
             'area_name' => ['nullable', 'string', 'max:255', 'required_with:area_type'],
             'postal_code' => ['nullable', 'string', 'max:20'],
-            'status' => ['required', Rule::enum(BusinessStatus::class)],
+            'status' => ['required', Rule::enum(RecordStatus::class)],
         ];
     }
 

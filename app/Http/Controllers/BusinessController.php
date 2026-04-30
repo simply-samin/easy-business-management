@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AreaType;
-use App\Enums\BusinessStatus;
 use App\Enums\BusinessType;
-use App\Enums\OutletStatus;
 use App\Enums\OutletType;
+use App\Enums\RecordStatus;
 use App\Http\Requests\StoreBusinessRequest;
 use App\Http\Requests\UpdateBusinessRequest;
 use App\Models\Business;
@@ -66,7 +65,7 @@ class BusinessController extends Controller
     {
         return Inertia::render('businesses/create', [
             'businessTypeOptions' => BusinessType::options(),
-            'statusOptions' => BusinessStatus::options(),
+            'statusOptions' => RecordStatus::options(),
             'areaTypeOptions' => AreaType::options(),
         ]);
     }
@@ -94,7 +93,7 @@ class BusinessController extends Controller
         return Inertia::render('businesses/show', [
             'business' => $business,
             'outletTypeOptions' => OutletType::options(),
-            'outletStatusOptions' => OutletStatus::options(),
+            'outletStatusOptions' => RecordStatus::options(),
             'areaTypeOptions' => AreaType::options(),
         ]);
     }
@@ -107,7 +106,7 @@ class BusinessController extends Controller
         return Inertia::render('businesses/edit', [
             'business' => $business,
             'businessTypeOptions' => BusinessType::options(),
-            'statusOptions' => BusinessStatus::options(),
+            'statusOptions' => RecordStatus::options(),
             'areaTypeOptions' => AreaType::options(),
         ]);
     }
