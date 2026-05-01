@@ -1,10 +1,10 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
+import { create, index } from '@/routes/businesses';
 import type { BreadcrumbItem } from '@/types';
 import BusinessForm from './form';
 import type { Option } from './types';
-import { index, create } from '@/routes/businesses';
 
 export default function BusinessesCreate({
     businessTypeOptions,
@@ -16,8 +16,8 @@ export default function BusinessesCreate({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index.url() },
-        { title: 'Create', href: create.url() },
+        { title: 'Businesses', href: index().url },
+        { title: 'Create', href: create().url },
     ];
 
     return (
@@ -26,13 +26,13 @@ export default function BusinessesCreate({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <Heading title="Create Business" />
+                    <Heading title="Create Business" className="mb-8" />
 
                     <BusinessForm
                         businessTypeOptions={businessTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={index.url()}
+                        cancelHref={index().url}
                     />
                 </div>
             </div>

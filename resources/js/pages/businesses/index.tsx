@@ -123,17 +123,17 @@ export default function BusinessesIndex({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-7xl space-y-8">
-                    <div className="mb-6">
-                        <div className="flex items-center justify-between">
-                            <Heading title="Businesses" />
-                            <Button asChild>
-                                <Link href={businessCreate()}>
-                                    <Plus />
-                                    New Business
-                                </Link>
-                            </Button>
-                        </div>
+
+                    <div className="mb-8 flex items-center justify-between">
+                        <Heading title="Businesses" />
+                        <Button asChild>
+                            <Link href={businessCreate()}>
+                                <Plus />
+                                New Business
+                            </Link>
+                        </Button>
                     </div>
+
 
                     {flash.status && (
                         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">

@@ -19,11 +19,11 @@ export default function OutletsCreate({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index.url() },
-        { title: business.name, href: show.url(business.id) },
+        { title: 'Businesses', href: index().url },
+        { title: business.name, href: show(business.id).url },
         {
             title: 'Create Outlet',
-            href: create.url(business.id),
+            href: create(business.id).url,
         },
     ];
 
@@ -33,14 +33,14 @@ export default function OutletsCreate({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <Heading title="Create Outlet" />
+                    <Heading title="Create Outlet" className="mb-8" />
 
                     <OutletForm
                         business={business}
                         outletTypeOptions={outletTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={show.url(business.id)}
+                        cancelHref={show(business.id).url}
                     />
                 </div>
             </div>

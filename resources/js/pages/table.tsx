@@ -72,6 +72,7 @@ export default function DemoTablePage() {
                     <Heading
                         title="Demo Table"
                         description="Basic shadcn-style data table chrome recreated with a semantic HTML table and Tailwind classes."
+                        className="mb-8"
                     />
 
                     <section className="space-y-4">

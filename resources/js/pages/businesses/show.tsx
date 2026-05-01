@@ -28,8 +28,8 @@ export default function BusinessesShow({ business }: { business: Business }) {
     const outlets = business.outlets ?? [];
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: businessIndex.url() },
-        { title: business.name, href: businessShow.url(business.id) },
+        { title: 'Businesses', href: businessIndex().url },
+        { title: 'View', href: businessShow(business.id).url },
     ];
 
     return (
@@ -38,25 +38,12 @@ export default function BusinessesShow({ business }: { business: Business }) {
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <Heading title={business.name} />
-
-                            <Badge
-                                variant="outline"
-                                className={
-                                    business.status === 'active'
-                                        ? 'border-transparent bg-blue-100 text-blue-800'
-                                        : 'border-transparent bg-gray-300 text-gray-800'
-                                }
-                            >
-                                {humanize(business.status)}
-                            </Badge>
-                        </div>
+                    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <Heading title={business.name} />
 
                         <div className="flex gap-2">
                             <Button asChild variant="outline">
-                                <Link href={businessEdit.url(business.id)}>
+                                <Link href={businessEdit(business.id).url}>
                                     <Pencil className="size-4" />
                                     Edit
                                 </Link>
@@ -122,6 +109,8 @@ export default function BusinessesShow({ business }: { business: Business }) {
                                 <TextEntry
                                     label="Status"
                                     value={humanize(business.status)}
+                                    badge
+                                    color={business.status === 'active' ? 'success' : 'gray'}
                                 />
                             </div>
                         </div>
@@ -210,7 +199,7 @@ export default function BusinessesShow({ business }: { business: Business }) {
                                     Outlets ({outlets.length})
                                 </div>
                                 <Button asChild size="sm">
-                                    <Link href={outletCreate.url(business.id)}>
+                                    <Link href={outletCreate(business.id).url}>
                                         <Plus className="size-4" />
                                         New Outlet
                                     </Link>
@@ -277,7 +266,7 @@ function OutletListItem({
 
             <div className="flex gap-2">
                 <Button size="sm" variant="outline" asChild>
-                    <Link href={outletEdit.url({ business, outlet })}>
+                    <Link href={outletEdit({ business, outlet }).url}>
                         <Pencil className="size-4" />
                         Edit
                     </Link>
@@ -313,16 +302,36 @@ function OutletListItem({
 function TextEntry({
     label,
     value,
+    badge = false,
+    color = 'gray',
 }: {
     label: string;
     value: string | null | undefined;
+    badge?: boolean;
+    color?: 'gray' | 'blue' | 'success' | 'danger' | 'warning';
 }) {
+    const colorClasses: Record<string, string> = {
+        gray: 'border-transparent bg-gray-100 text-gray-800',
+        blue: 'border-transparent bg-blue-100 text-blue-800',
+        success: 'border-transparent bg-emerald-100 text-emerald-800',
+        danger: 'border-transparent bg-red-100 text-red-800',
+        warning: 'border-transparent bg-amber-100 text-amber-800',
+    };
+
+    const content = badge ? (
+        <Badge variant="outline" className={colorClasses[color]}>
+            {value || '-'}
+        </Badge>
+    ) : (
+        value || '-'
+    );
+
     return (
         <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
             <div className="text-sm text-muted-foreground sm:w-32 sm:shrink-0">
                 {label}
             </div>
-            <div className="text-sm font-medium">{value || '-'}</div>
+            <div className="text-sm font-medium">{content}</div>
         </div>
     );
 }

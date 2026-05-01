@@ -21,11 +21,11 @@ export default function OutletsEdit({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index.url() },
-        { title: business.name, href: show.url(business.id) },
+        { title: 'Businesses', href: index().url },
+        { title: business.name, href: show(business.id).url },
         {
             title: 'Edit Outlet',
-            href: edit.url({ business, outlet }),
+            href: edit({ business, outlet }).url,
         },
     ];
 
@@ -35,7 +35,7 @@ export default function OutletsEdit({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <Heading title="Edit Outlet" />
+                    <Heading title="Edit Outlet" className="mb-8" />
 
                     <OutletForm
                         business={business}
@@ -43,7 +43,7 @@ export default function OutletsEdit({
                         outletTypeOptions={outletTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={show.url(business.id)}
+                        cancelHref={show(business.id).url}
                     />
                 </div>
             </div>

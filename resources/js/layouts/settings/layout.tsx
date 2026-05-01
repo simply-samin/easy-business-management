@@ -47,6 +47,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             <Heading
                 title="Settings"
                 description="Manage your profile and account settings"
+                className="mb-8"
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">
