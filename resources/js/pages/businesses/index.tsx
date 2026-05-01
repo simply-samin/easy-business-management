@@ -1,121 +1,46 @@
-import { useEffect, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    ArrowUpDown,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
-    Plus,
-    Search,
-} from 'lucide-react';
-import {
-    create as businessCreate,
-    edit as businessEdit,
-    show as businessShow,
-} from '@/actions/App/Http/Controllers/BusinessController';
+import { ArrowUpDown, Plus, Search } from 'lucide-react';
+import { useRef } from 'react';
 import Heading from '@/components/heading';
+import PaginationLinks from '@/components/pagination-links';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import { create, edit, index, show } from '@/routes/businesses';
+import type { BreadcrumbItem, LengthAwarePagination } from '@/types';
+import type { Business } from './types';
 
-type BusinessListItem = {
-    id: number;
-    name: string;
-    email: string | null;
-    mobile: string;
-    status: string;
-    outlets_count: number;
+type QueryString = {
+    search: string | null;
+    sort: 'name' | 'created_at';
+    direction: 'asc' | 'desc';
 };
 
 export default function BusinessesIndex({
     businesses,
-    filters,
+    queryString,
 }: {
-    businesses: {
-        data: BusinessListItem[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-        from: number | null;
-        to: number | null;
-        prev_page_url: string | null;
-        next_page_url: string | null;
-        first_page_url: string;
-        last_page_url: string;
-    };
-    filters: {
-        search: string | null;
-        sort: 'name' | 'created_at';
-        direction: 'asc' | 'desc';
-    };
+    businesses: LengthAwarePagination<Business>;
+    queryString: QueryString;
 }) {
+    const searchTimeout = useRef<number | undefined>(undefined);
+    const reloadProps = ['businesses', 'queryString'];
+
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: '/businesses' },
-        { title: 'List', href: '/businesses' },
+        { title: 'Businesses', href: index().url },
+        { title: 'List', href: index().url },
     ];
 
-    const { flash } = usePage().props;
-    const [search, setSearch] = useState(filters.search ?? '');
-    const [sort, setSort] = useState(filters.sort);
-    const [direction, setDirection] = useState(filters.direction);
+    const { flash } = usePage<{
+        flash: { status?: string };
+    }>().props;
 
-    useEffect(() => {
-        setSearch(filters.search ?? '');
-        setSort(filters.sort);
-        setDirection(filters.direction);
-    }, [filters.direction, filters.search, filters.sort]);
-
-    useEffect(() => {
-        const timer = window.setTimeout(() => {
-            const nextSearch = search.trim();
-
-            if (
-                nextSearch === (filters.search ?? '') &&
-                sort === filters.sort &&
-                direction === filters.direction
-            ) {
-                return;
-            }
-
-            router.get(
-                '/businesses',
-                {
-                    search: nextSearch || undefined,
-                    sort,
-                    direction,
-                    page: 1,
-                },
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                    replace: true,
-                },
-            );
-        }, 300);
-
-        return () => {
-            window.clearTimeout(timer);
-        };
-    }, [
-        direction,
-        filters.direction,
-        filters.search,
-        filters.sort,
-        search,
-        sort,
-    ]);
-
-    function handleSortByName() {
-        const nextDirection =
-            sort === 'name' && direction === 'asc' ? 'desc' : 'asc';
-
-        setSort('name');
-        setDirection(nextDirection);
-    }
+    const nextNameDirection =
+        queryString.sort === 'name' && queryString.direction === 'asc'
+            ? 'desc'
+            : 'asc';
+    const hasPages = businesses.last_page > 1;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -123,17 +48,15 @@ export default function BusinessesIndex({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-7xl space-y-8">
-
                     <div className="mb-8 flex items-center justify-between">
                         <Heading title="Businesses" />
                         <Button asChild>
-                            <Link href={businessCreate()}>
+                            <Link href={create()}>
                                 <Plus />
                                 New Business
                             </Link>
                         </Button>
                     </div>
-
 
                     {flash.status && (
                         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
@@ -150,12 +73,52 @@ export default function BusinessesIndex({
                                         type="search"
                                         placeholder="Search businesses..."
                                         className="pl-9"
-                                        value={search}
-                                        onChange={(event) =>
-                                            setSearch(event.target.value)
-                                        }
+                                        defaultValue={queryString.search ?? ''}
+                                        onChange={(event) => {
+                                            const search =
+                                                event.currentTarget.value.trim();
+
+                                            window.clearTimeout(
+                                                searchTimeout.current,
+                                            );
+
+                                            searchTimeout.current =
+                                                window.setTimeout(() => {
+                                                    router.get(
+                                                        index().url,
+                                                        {
+                                                            search:
+                                                                search ||
+                                                                undefined,
+                                                            sort: queryString.sort,
+                                                            direction:
+                                                                queryString.direction,
+                                                            page: 1,
+                                                        },
+                                                        {
+                                                            preserveScroll:
+                                                                true,
+                                                            preserveState: true,
+                                                            replace: true,
+                                                            only: reloadProps,
+                                                        },
+                                                    );
+                                                }, 300);
+                                        }}
                                     />
                                 </div>
+
+                                {queryString.search && (
+                                    <Button variant="outline" asChild>
+                                        <Link
+                                            href={index()}
+                                            preserveScroll
+                                            only={reloadProps}
+                                        >
+                                            Clear
+                                        </Link>
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="overflow-hidden rounded-md border">
@@ -168,12 +131,28 @@ export default function BusinessesIndex({
                                                         variant="ghost"
                                                         size="sm"
                                                         className="-ml-3 h-8 px-3 font-medium"
-                                                        onClick={
-                                                            handleSortByName
-                                                        }
+                                                        asChild
                                                     >
-                                                        Name
-                                                        <ArrowUpDown className="size-4" />
+                                                        <Link
+                                                            href={index({
+                                                                query: {
+                                                                    search:
+                                                                        queryString.search ??
+                                                                        undefined,
+                                                                    sort: 'name',
+                                                                    direction:
+                                                                        nextNameDirection,
+                                                                    page: 1,
+                                                                },
+                                                            })}
+                                                            preserveScroll
+                                                            only={
+                                                                reloadProps
+                                                            }
+                                                        >
+                                                            Name
+                                                            <ArrowUpDown className="size-4" />
+                                                        </Link>
                                                     </Button>
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
@@ -241,14 +220,15 @@ export default function BusinessesIndex({
                                                             </td>
                                                             <td className="px-4 py-3 align-middle">
                                                                 {
-                                                                    business.outlets_count
+                                                                    business.outlets_count ??
+                                                                    0
                                                                 }
                                                             </td>
                                                             <td className="px-4 py-3 text-right align-middle">
                                                                 <div className="flex justify-end gap-3">
                                                                     <Link
                                                                         className="text-primary underline-offset-4 hover:underline"
-                                                                        href={businessShow(
+                                                                        href={show(
                                                                             business,
                                                                         )}
                                                                     >
@@ -256,7 +236,7 @@ export default function BusinessesIndex({
                                                                     </Link>
                                                                     <Link
                                                                         className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                                                                        href={businessEdit(
+                                                                        href={edit(
                                                                             business,
                                                                         )}
                                                                     >
@@ -273,7 +253,7 @@ export default function BusinessesIndex({
                                                         colSpan={5}
                                                         className="h-24 px-4 text-center align-middle text-sm text-muted-foreground"
                                                     >
-                                                        {search.trim()
+                                                        {queryString.search
                                                             ? 'No businesses found.'
                                                             : 'No businesses yet.'}
                                                     </td>
@@ -284,151 +264,19 @@ export default function BusinessesIndex({
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="text-sm text-muted-foreground">
-                                    {businesses.total > 0
-                                        ? `Showing ${businesses.from}-${businesses.to} of ${businesses.total} businesses`
-                                        : 'Showing 0 businesses'}
-                                </div>
-
-                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
-                                    <div className="text-sm font-medium">
-                                        Page {businesses.current_page} of{' '}
-                                        {businesses.last_page}
+                            {hasPages && (
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="text-sm text-muted-foreground sm:shrink-0 sm:whitespace-nowrap">
+                                        {`Showing ${businesses.from}-${businesses.to} of ${businesses.total} businesses`}
                                     </div>
 
-                                    <div className="flex items-center gap-2">
-                                        {businesses.current_page > 1 ? (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="hidden size-8 lg:inline-flex"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={
-                                                        businesses.first_page_url
-                                                    }
-                                                    preserveScroll
-                                                >
-                                                    <ChevronsLeft />
-                                                    <span className="sr-only">
-                                                        First page
-                                                    </span>
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="hidden size-8 lg:inline-flex"
-                                                disabled
-                                            >
-                                                <ChevronsLeft />
-                                                <span className="sr-only">
-                                                    First page
-                                                </span>
-                                            </Button>
-                                        )}
-                                        {businesses.prev_page_url ? (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="size-8"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={
-                                                        businesses.prev_page_url
-                                                    }
-                                                    preserveScroll
-                                                >
-                                                    <ChevronLeft />
-                                                    <span className="sr-only">
-                                                        Previous page
-                                                    </span>
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="size-8"
-                                                disabled
-                                            >
-                                                <ChevronLeft />
-                                                <span className="sr-only">
-                                                    Previous page
-                                                </span>
-                                            </Button>
-                                        )}
-                                        {businesses.next_page_url ? (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="size-8"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={
-                                                        businesses.next_page_url
-                                                    }
-                                                    preserveScroll
-                                                >
-                                                    <ChevronRight />
-                                                    <span className="sr-only">
-                                                        Next page
-                                                    </span>
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="size-8"
-                                                disabled
-                                            >
-                                                <ChevronRight />
-                                                <span className="sr-only">
-                                                    Next page
-                                                </span>
-                                            </Button>
-                                        )}
-                                        {businesses.next_page_url ? (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="hidden size-8 lg:inline-flex"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={
-                                                        businesses.last_page_url
-                                                    }
-                                                    preserveScroll
-                                                >
-                                                    <ChevronsRight />
-                                                    <span className="sr-only">
-                                                        Last page
-                                                    </span>
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="hidden size-8 lg:inline-flex"
-                                                disabled
-                                            >
-                                                <ChevronsRight />
-                                                <span className="sr-only">
-                                                    Last page
-                                                </span>
-                                            </Button>
-                                        )}
-                                    </div>
+                                    <PaginationLinks
+                                        links={businesses.links}
+                                        only={reloadProps}
+                                        className="mx-0 w-auto justify-start sm:justify-end"
+                                    />
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </section>
                 </div>

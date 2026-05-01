@@ -50,7 +50,7 @@ class BusinessController extends Controller
 
         return Inertia::render('businesses/index', [
             'businesses' => $businesses,
-            'filters' => [
+            'queryString' => [
                 'search' => $search !== '' ? $search : null,
                 'sort' => $sort,
                 'direction' => $direction,

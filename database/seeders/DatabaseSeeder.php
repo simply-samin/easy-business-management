@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@app.com',
         ]);
+
+        $this->call(BusinessSeeder::class);
     }
 }

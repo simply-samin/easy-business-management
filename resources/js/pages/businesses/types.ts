@@ -35,6 +35,7 @@ type Business = {
     area_name: string | null;
     postal_code: string | null;
     status: string;
+    outlets_count?: number;
     outlets?: Outlet[];
 };
 
