@@ -7,9 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { create, edit, index, show } from '@/routes/businesses';
+import { create, edit, index, show } from '@/routes/product-categories';
 import type { BreadcrumbItem, LengthAwarePagination } from '@/types';
-import type { Business } from './types';
+import type { ProductCategory } from './types';
 
 type QueryString = {
     search: string | null;
@@ -17,18 +17,18 @@ type QueryString = {
     direction: 'asc' | 'desc';
 };
 
-export default function BusinessesIndex({
-    businesses,
+export default function ProductCategoriesIndex({
+    productCategories,
     queryString,
 }: {
-    businesses: LengthAwarePagination<Business>;
+    productCategories: LengthAwarePagination<ProductCategory>;
     queryString: QueryString;
 }) {
     const searchTimeout = useRef<number | undefined>(undefined);
-    const reloadProps = ['businesses', 'queryString'];
+    const reloadProps = ['productCategories', 'queryString'];
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
+        { title: 'Product Categories', href: index().url },
         { title: 'List', href: index().url },
     ];
 
@@ -40,20 +40,20 @@ export default function BusinessesIndex({
         queryString.sort === 'name' && queryString.direction === 'asc'
             ? 'desc'
             : 'asc';
-    const hasPages = businesses.last_page > 1;
+    const hasPages = productCategories.last_page > 1;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Businesses" />
+            <Head title="Product Categories" />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-7xl space-y-8">
                     <div className="mb-8 flex items-center justify-between">
-                        <Heading title="Businesses" />
+                        <Heading title="Product Categories" />
                         <Button asChild>
                             <Link href={create()}>
                                 <Plus />
-                                New Business
+                                New Category
                             </Link>
                         </Button>
                     </div>
@@ -71,7 +71,7 @@ export default function BusinessesIndex({
                                     <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         type="search"
-                                        placeholder="Search businesses..."
+                                        placeholder="Search categories..."
                                         className="pl-9"
                                         defaultValue={queryString.search ?? ''}
                                         onChange={(event) => {
@@ -96,7 +96,8 @@ export default function BusinessesIndex({
                                                             page: 1,
                                                         },
                                                         {
-                                                            preserveScroll: true,
+                                                            preserveScroll:
+                                                                true,
                                                             preserveState: true,
                                                             replace: true,
                                                             only: reloadProps,
@@ -145,7 +146,9 @@ export default function BusinessesIndex({
                                                                 },
                                                             })}
                                                             preserveScroll
-                                                            only={reloadProps}
+                                                            only={
+                                                                reloadProps
+                                                            }
                                                         >
                                                             Name
                                                             <ArrowUpDown className="size-4" />
@@ -153,13 +156,13 @@ export default function BusinessesIndex({
                                                     </Button>
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Mobile
+                                                    Business
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
                                                     Status
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Outlets
+                                                    Products
                                                 </th>
                                                 <th className="h-10 px-4 text-right align-middle font-medium">
                                                     <span className="sr-only">
@@ -169,54 +172,52 @@ export default function BusinessesIndex({
                                             </tr>
                                         </thead>
                                         <tbody className="[&_tr:last-child]:border-0">
-                                            {businesses.data.length > 0 ? (
-                                                businesses.data.map(
-                                                    (business) => (
+                                            {productCategories.data.length >
+                                            0 ? (
+                                                productCategories.data.map(
+                                                    (productCategory) => (
                                                         <tr
-                                                            key={business.id}
+                                                            key={
+                                                                productCategory.id
+                                                            }
                                                             className="border-b transition-colors hover:bg-muted/50"
                                                         >
                                                             <td className="px-4 py-3 align-middle">
                                                                 <div className="font-medium">
                                                                     {
-                                                                        business.name
+                                                                        productCategory.name
                                                                     }
                                                                 </div>
-                                                                {business.email && (
-                                                                    <div className="text-sm text-muted-foreground">
-                                                                        {
-                                                                            business.email
-                                                                        }
-                                                                    </div>
-                                                                )}
                                                             </td>
                                                             <td className="px-4 py-3 align-middle">
-                                                                {
-                                                                    business.mobile
-                                                                }
+                                                                {productCategory
+                                                                    .business
+                                                                    ?.name ??
+                                                                    '-'}
                                                             </td>
                                                             <td className="px-4 py-3 align-middle">
                                                                 <Badge
                                                                     variant="outline"
                                                                     className={
-                                                                        business.status ===
+                                                                        productCategory.status ===
                                                                         'active'
                                                                             ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
                                                                             : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                                                                     }
                                                                 >
-                                                                    {business.status
+                                                                    {productCategory
+                                                                        .status
                                                                         .charAt(
                                                                             0,
                                                                         )
                                                                         .toUpperCase() +
-                                                                        business.status.slice(
+                                                                        productCategory.status.slice(
                                                                             1,
                                                                         )}
                                                                 </Badge>
                                                             </td>
                                                             <td className="px-4 py-3 align-middle">
-                                                                {business.outlets_count ??
+                                                                {productCategory.products_count ??
                                                                     0}
                                                             </td>
                                                             <td className="px-4 py-3 text-right align-middle">
@@ -224,7 +225,7 @@ export default function BusinessesIndex({
                                                                     <Link
                                                                         className="text-primary underline-offset-4 hover:underline"
                                                                         href={show(
-                                                                            business,
+                                                                            productCategory.id,
                                                                         )}
                                                                     >
                                                                         View
@@ -232,7 +233,7 @@ export default function BusinessesIndex({
                                                                     <Link
                                                                         className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                                                                         href={edit(
-                                                                            business,
+                                                                            productCategory.id,
                                                                         )}
                                                                     >
                                                                         Edit
@@ -249,8 +250,8 @@ export default function BusinessesIndex({
                                                         className="h-24 px-4 text-center align-middle text-sm text-muted-foreground"
                                                     >
                                                         {queryString.search
-                                                            ? 'No businesses found.'
-                                                            : 'No businesses yet.'}
+                                                            ? 'No product categories found.'
+                                                            : 'No product categories yet.'}
                                                     </td>
                                                 </tr>
                                             )}
@@ -262,11 +263,11 @@ export default function BusinessesIndex({
                             {hasPages && (
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="text-sm text-muted-foreground sm:shrink-0 sm:whitespace-nowrap">
-                                        {`Showing ${businesses.from}-${businesses.to} of ${businesses.total} businesses`}
+                                        {`Showing ${productCategories.from}-${productCategories.to} of ${productCategories.total} categories`}
                                     </div>
 
                                     <PaginationLinks
-                                        links={businesses.links}
+                                        links={productCategories.links}
                                         only={reloadProps}
                                         className="mx-0 w-auto justify-start sm:justify-end"
                                     />

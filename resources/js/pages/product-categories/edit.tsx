@@ -3,51 +3,47 @@ import { Eye } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { edit, index, show } from '@/routes/businesses';
+import { edit, index, show } from '@/routes/product-categories';
 import type { BreadcrumbItem } from '@/types';
-import BusinessForm from './form';
-import { Option } from '@/types';
-import type { Business } from './types';
+import ProductCategoryForm from './form';
+import type { Business, Option, ProductCategory } from './types';
 
-export default function BusinessesEdit({
-    business,
-    businessTypeOptions,
+export default function ProductCategoriesEdit({
+    productCategory,
+    businesses,
     statusOptions,
-    areaTypeOptions,
 }: {
-    business: Business;
-    businessTypeOptions: Option[];
+    productCategory: ProductCategory;
+    businesses: Business[];
     statusOptions: Option[];
-    areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
-        { title: 'Edit', href: edit(business.id).url },
+        { title: 'Product Categories', href: index().url },
+        { title: 'Edit', href: edit(productCategory.id).url },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Edit Business" />
+            <Head title="Edit Product Category" />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
                     <div className="mb-8 flex items-start justify-between gap-4">
-                        <Heading title="Edit Business" />
+                        <Heading title="Edit Product Category" />
 
                         <Button variant="outline" asChild>
-                            <Link href={show(business.id).url}>
+                            <Link href={show(productCategory.id).url}>
                                 <Eye />
                                 View
                             </Link>
                         </Button>
                     </div>
 
-                    <BusinessForm
-                        business={business}
-                        businessTypeOptions={businessTypeOptions}
+                    <ProductCategoryForm
+                        productCategory={productCategory}
+                        businesses={businesses}
                         statusOptions={statusOptions}
-                        areaTypeOptions={areaTypeOptions}
-                        cancelHref={edit(business.id).url}
+                        cancelHref={edit(productCategory.id).url}
                     />
                 </div>
             </div>

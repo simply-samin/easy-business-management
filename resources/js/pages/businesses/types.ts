@@ -1,8 +1,3 @@
-type Option = {
-    label: string;
-    value: string;
-};
-
 type Outlet = {
     id: number;
     business_id?: number;
@@ -39,4 +34,4 @@ type Business = {
     outlets?: Outlet[];
 };
 
-export type { Business, Option, Outlet };
+export type { Business, Outlet };

@@ -14,7 +14,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { BusinessContext, Option, Outlet } from './types';
+import type { Option } from '@/types';
+import type { Business, Outlet } from './types';
 
 export default function OutletForm({
     business,
@@ -24,7 +25,7 @@ export default function OutletForm({
     areaTypeOptions,
     cancelHref,
 }: {
-    business: BusinessContext;
+    business: Business;
     outlet?: Outlet;
     outletTypeOptions: Option[];
     statusOptions: Option[];

@@ -5,7 +5,7 @@ import { index, show } from '@/routes/businesses';
 import { edit } from '@/routes/businesses/outlets';
 import type { BreadcrumbItem } from '@/types';
 import OutletForm from './form';
-import type { BusinessContext, Option, Outlet } from './types';
+import type { Business, Option, Outlet } from './types';
 
 export default function OutletsEdit({
     business,
@@ -14,7 +14,7 @@ export default function OutletsEdit({
     statusOptions,
     areaTypeOptions,
 }: {
-    business: BusinessContext;
+    business: Business;
     outlet: Outlet;
     outletTypeOptions: Option[];
     statusOptions: Option[];

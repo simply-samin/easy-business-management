@@ -3,6 +3,8 @@
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\DemoTableController;
 use App\Http\Controllers\OutletController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -18,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('businesses.outlets', OutletController::class)
         ->except(['index', 'show'])
         ->scoped();
+    Route::resource('product-categories', ProductCategoryController::class);
+    Route::resource('products', ProductController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

@@ -4,6 +4,8 @@ import {
     BriefcaseBusiness,
     FolderGit2,
     LayoutGrid,
+    Package,
+    Tags,
 } from 'lucide-react';
 import { index as businessIndex } from '@/routes/businesses';
 import AppLogo from '@/components/app-logo';
@@ -21,6 +23,8 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { index as productCategoryIndex } from '@/routes/product-categories';
+import { index as productIndex } from '@/routes/products';
 
 const mainNavItems: NavItem[] = [
     {
@@ -33,6 +37,16 @@ const mainNavItems: NavItem[] = [
         href: businessIndex(),
         icon: BriefcaseBusiness,
     },
+    {
+        title: 'Product Categories',
+        href: productCategoryIndex(),
+        icon: Tags,
+    },
+    {
+        title: 'Products',
+        href: productIndex(),
+        icon: Package,
+    }
 ];
 
 const footerNavItems: NavItem[] = [

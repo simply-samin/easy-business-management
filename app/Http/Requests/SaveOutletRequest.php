@@ -1,23 +1,30 @@
 <?php
 
-namespace App\Concerns;
+namespace App\Http\Requests;
 
 use App\Enums\AreaType;
 use App\Enums\OutletType;
 use App\Enums\RecordStatus;
+use App\Models\Business;
 use App\Models\Outlet;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-trait OutletValidationRules
+class SaveOutletRequest extends FormRequest
 {
     /**
-     * Get the validation rules used to validate outlets.
+     * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, ValidationRule|array<mixed>|string>>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
-    protected function outletRules(int $businessId, ?int $outletId = null): array
+    public function rules(): array
     {
+        /** @var Business $business */
+        $business = $this->route('business');
+        /** @var Outlet|null $outlet */
+        $outlet = $this->route('outlet');
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'code' => [
@@ -25,8 +32,8 @@ trait OutletValidationRules
                 'string',
                 'max:50',
                 Rule::unique(Outlet::class, 'code')
-                    ->where(fn ($query) => $query->where('business_id', $businessId))
-                    ->ignore($outletId),
+                    ->where(fn ($query) => $query->where('business_id', $business->id))
+                    ->ignore($outlet?->id),
             ],
             'mobile' => ['required', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -41,11 +48,11 @@ trait OutletValidationRules
     }
 
     /**
-     * Get the validation messages used to validate outlets.
+     * Get custom messages for validator errors.
      *
      * @return array<string, string>
      */
-    protected function outletMessages(): array
+    public function messages(): array
     {
         return [
             'name.required' => 'Enter an outlet name.',

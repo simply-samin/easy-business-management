@@ -1,37 +1,37 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
-import { create, index } from '@/routes/businesses';
+import { create, index } from '@/routes/product-categories';
 import type { BreadcrumbItem } from '@/types';
-import BusinessForm from './form';
-import type { Option } from '@/types';
+import ProductCategoryForm from './form';
+import type { Business, Option } from './types';
 
-export default function BusinessesCreate({
-    businessTypeOptions,
+export default function ProductCategoriesCreate({
+    businesses,
     statusOptions,
-    areaTypeOptions,
 }: {
-    businessTypeOptions: Option[];
+    businesses: Business[];
     statusOptions: Option[];
-    areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
+        { title: 'Product Categories', href: index().url },
         { title: 'Create', href: create().url },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Business" />
+            <Head title="Create Product Category" />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <Heading title="Create Business" className="mb-8" />
+                    <Heading
+                        title="Create Product Category"
+                        className="mb-8"
+                    />
 
-                    <BusinessForm
-                        businessTypeOptions={businessTypeOptions}
+                    <ProductCategoryForm
+                        businesses={businesses}
                         statusOptions={statusOptions}
-                        areaTypeOptions={areaTypeOptions}
                         cancelHref={index().url}
                     />
                 </div>

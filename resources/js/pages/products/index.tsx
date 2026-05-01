@@ -1,15 +1,17 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowUpDown, Plus, Search } from 'lucide-react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
+import { ArrowUpDown, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
+import ProductController from '@/actions/App/Http/Controllers/ProductController';
+import AlertError from '@/components/alert-error';
 import Heading from '@/components/heading';
 import PaginationLinks from '@/components/pagination-links';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { create, edit, index, show } from '@/routes/businesses';
+import { create, edit, index } from '@/routes/products';
 import type { BreadcrumbItem, LengthAwarePagination } from '@/types';
-import type { Business } from './types';
+import type { Product } from './types';
 
 type QueryString = {
     search: string | null;
@@ -17,43 +19,44 @@ type QueryString = {
     direction: 'asc' | 'desc';
 };
 
-export default function BusinessesIndex({
-    businesses,
+export default function ProductsIndex({
+    products,
     queryString,
 }: {
-    businesses: LengthAwarePagination<Business>;
+    products: LengthAwarePagination<Product>;
     queryString: QueryString;
 }) {
     const searchTimeout = useRef<number | undefined>(undefined);
-    const reloadProps = ['businesses', 'queryString'];
+    const reloadProps = ['products', 'queryString'];
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
+        { title: 'Products', href: index().url },
         { title: 'List', href: index().url },
     ];
 
-    const { flash } = usePage<{
+    const { flash, errors } = usePage<{
         flash: { status?: string };
+        errors: Record<string, string>;
     }>().props;
 
     const nextNameDirection =
         queryString.sort === 'name' && queryString.direction === 'asc'
             ? 'desc'
             : 'asc';
-    const hasPages = businesses.last_page > 1;
+    const hasPages = products.last_page > 1;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Businesses" />
+            <Head title="Products" />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-7xl space-y-8">
                     <div className="mb-8 flex items-center justify-between">
-                        <Heading title="Businesses" />
+                        <Heading title="Products" />
                         <Button asChild>
                             <Link href={create()}>
                                 <Plus />
-                                New Business
+                                New Product
                             </Link>
                         </Button>
                     </div>
@@ -64,6 +67,13 @@ export default function BusinessesIndex({
                         </div>
                     )}
 
+                    {errors.product && (
+                        <AlertError
+                            errors={[errors.product]}
+                            title="Product deletion blocked."
+                        />
+                    )}
+
                     <section className="space-y-4">
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -71,7 +81,7 @@ export default function BusinessesIndex({
                                     <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         type="search"
-                                        placeholder="Search businesses..."
+                                        placeholder="Search products..."
                                         className="pl-9"
                                         defaultValue={queryString.search ?? ''}
                                         onChange={(event) => {
@@ -153,13 +163,16 @@ export default function BusinessesIndex({
                                                     </Button>
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Mobile
+                                                    Category
+                                                </th>
+                                                <th className="h-10 px-4 text-left align-middle font-medium">
+                                                    Business
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
                                                     Status
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Outlets
+                                                    Base Unit
                                                 </th>
                                                 <th className="h-10 px-4 text-right align-middle font-medium">
                                                     <span className="sr-only">
@@ -169,88 +182,113 @@ export default function BusinessesIndex({
                                             </tr>
                                         </thead>
                                         <tbody className="[&_tr:last-child]:border-0">
-                                            {businesses.data.length > 0 ? (
-                                                businesses.data.map(
-                                                    (business) => (
-                                                        <tr
-                                                            key={business.id}
-                                                            className="border-b transition-colors hover:bg-muted/50"
-                                                        >
-                                                            <td className="px-4 py-3 align-middle">
-                                                                <div className="font-medium">
-                                                                    {
-                                                                        business.name
-                                                                    }
+                                            {products.data.length > 0 ? (
+                                                products.data.map((product) => (
+                                                    <tr
+                                                        key={product.id}
+                                                        className="border-b transition-colors hover:bg-muted/50"
+                                                    >
+                                                        <td className="px-4 py-3 align-middle">
+                                                            <div className="font-medium">
+                                                                {product.name}
+                                                            </div>
+                                                            {(product.brand ||
+                                                                product.sku) && (
+                                                                <div className="text-sm text-muted-foreground">
+                                                                    {[
+                                                                        product.brand,
+                                                                        product.sku,
+                                                                    ]
+                                                                        .filter(
+                                                                            Boolean,
+                                                                        )
+                                                                        .join(
+                                                                            ' · ',
+                                                                        )}
                                                                 </div>
-                                                                {business.email && (
-                                                                    <div className="text-sm text-muted-foreground">
-                                                                        {
-                                                                            business.email
-                                                                        }
-                                                                    </div>
-                                                                )}
-                                                            </td>
-                                                            <td className="px-4 py-3 align-middle">
-                                                                {
-                                                                    business.mobile
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 align-middle">
+                                                            {product.category
+                                                                ?.name ?? '-'}
+                                                        </td>
+                                                        <td className="px-4 py-3 align-middle">
+                                                            {product.business
+                                                                ?.name ?? '-'}
+                                                        </td>
+                                                        <td className="px-4 py-3 align-middle">
+                                                            <Badge
+                                                                variant="outline"
+                                                                className={
+                                                                    product.status ===
+                                                                    'active'
+                                                                        ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
+                                                                        : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                                                                 }
-                                                            </td>
-                                                            <td className="px-4 py-3 align-middle">
-                                                                <Badge
-                                                                    variant="outline"
-                                                                    className={
-                                                                        business.status ===
-                                                                        'active'
-                                                                            ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
-                                                                            : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
+                                                            >
+                                                                {product.status
+                                                                    .charAt(0)
+                                                                    .toUpperCase() +
+                                                                    product.status.slice(
+                                                                        1,
+                                                                    )}
+                                                            </Badge>
+                                                        </td>
+                                                        <td className="px-4 py-3 align-middle">
+                                                            {product
+                                                                .base_unit_of_measurement
+                                                                ?.name ?? '-'}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right align-middle">
+                                                            <div className="flex justify-end gap-3">
+                                                                <Link
+                                                                    className="text-primary underline-offset-4 hover:underline"
+                                                                    href={edit(
+                                                                        product.id,
+                                                                    )}
+                                                                >
+                                                                    Edit
+                                                                </Link>
+                                                                <Form
+                                                                    action={ProductController.destroy(
+                                                                        product.id,
+                                                                    )}
+                                                                    options={{
+                                                                        preserveScroll: true,
+                                                                    }}
+                                                                    onBefore={() =>
+                                                                        window.confirm(
+                                                                            'Delete this product? This only succeeds when no purchase items or stocks are attached.',
+                                                                        )
                                                                     }
                                                                 >
-                                                                    {business.status
-                                                                        .charAt(
-                                                                            0,
-                                                                        )
-                                                                        .toUpperCase() +
-                                                                        business.status.slice(
-                                                                            1,
-                                                                        )}
-                                                                </Badge>
-                                                            </td>
-                                                            <td className="px-4 py-3 align-middle">
-                                                                {business.outlets_count ??
-                                                                    0}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-right align-middle">
-                                                                <div className="flex justify-end gap-3">
-                                                                    <Link
-                                                                        className="text-primary underline-offset-4 hover:underline"
-                                                                        href={show(
-                                                                            business,
-                                                                        )}
-                                                                    >
-                                                                        View
-                                                                    </Link>
-                                                                    <Link
-                                                                        className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                                                                        href={edit(
-                                                                            business,
-                                                                        )}
-                                                                    >
-                                                                        Edit
-                                                                    </Link>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    ),
-                                                )
+                                                                    {({
+                                                                        processing,
+                                                                    }) => (
+                                                                        <button
+                                                                            type="submit"
+                                                                            disabled={
+                                                                                processing
+                                                                            }
+                                                                            className="text-destructive underline-offset-4 hover:underline"
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+                                                                    )}
+                                                                </Form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
                                             ) : (
                                                 <tr>
                                                     <td
-                                                        colSpan={5}
+                                                        colSpan={6}
                                                         className="h-24 px-4 text-center align-middle text-sm text-muted-foreground"
                                                     >
                                                         {queryString.search
-                                                            ? 'No businesses found.'
-                                                            : 'No businesses yet.'}
+                                                            ? 'No products found.'
+                                                            : 'No products yet.'}
                                                     </td>
                                                 </tr>
                                             )}
@@ -262,11 +300,11 @@ export default function BusinessesIndex({
                             {hasPages && (
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="text-sm text-muted-foreground sm:shrink-0 sm:whitespace-nowrap">
-                                        {`Showing ${businesses.from}-${businesses.to} of ${businesses.total} businesses`}
+                                        {`Showing ${products.from}-${products.to} of ${products.total} products`}
                                     </div>
 
                                     <PaginationLinks
-                                        links={businesses.links}
+                                        links={products.links}
                                         only={reloadProps}
                                         className="mx-0 w-auto justify-start sm:justify-end"
                                     />

@@ -6,8 +6,7 @@ use App\Enums\AreaType;
 use App\Enums\BusinessType;
 use App\Enums\OutletType;
 use App\Enums\RecordStatus;
-use App\Http\Requests\StoreBusinessRequest;
-use App\Http\Requests\UpdateBusinessRequest;
+use App\Http\Requests\SaveBusinessRequest;
 use App\Models\Business;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,9 +16,6 @@ use Inertia\Response;
 
 class BusinessController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): Response
     {
         $search = trim((string) $request->query('search', ''));
@@ -58,9 +54,6 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): Response
     {
         return Inertia::render('businesses/create', [
@@ -70,10 +63,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBusinessRequest $request): RedirectResponse
+    public function store(SaveBusinessRequest $request): RedirectResponse
     {
         $business = Business::create($request->validated());
 
@@ -81,9 +71,6 @@ class BusinessController extends Controller
             ->with('status', 'Business created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Business $business): Response
     {
         $business->load([
@@ -98,9 +85,6 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Business $business): Response
     {
         return Inertia::render('businesses/edit', [
@@ -111,10 +95,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBusinessRequest $request, Business $business): RedirectResponse
+    public function update(SaveBusinessRequest $request, Business $business): RedirectResponse
     {
         $business->update($request->validated());
 
@@ -122,9 +103,6 @@ class BusinessController extends Controller
             ->with('status', 'Business updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Business $business): RedirectResponse
     {
         if ($business->outlets()->exists()) {

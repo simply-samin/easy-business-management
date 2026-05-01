@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductCategory extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
     use HasFactory;
 
     /**
@@ -25,11 +24,6 @@ class ProductCategory extends Model
         'status',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -37,21 +31,11 @@ class ProductCategory extends Model
         ];
     }
 
-    /**
-     * Get the business that owns the product category.
-     *
-     * @return BelongsTo<Business, $this>
-     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    /**
-     * Get the products for the product category.
-     *
-     * @return HasMany<Product, $this>
-     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

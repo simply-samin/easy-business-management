@@ -14,7 +14,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { Business, Option } from './types';
+import { Option } from '@/types';
+import type { Business } from './types';
 
 export default function BusinessForm({
     business,

@@ -1,9 +1,4 @@
-type Option = {
-    label: string;
-    value: string;
-};
-
-type BusinessContext = {
+type Business = {
     id: number;
     name: string;
 };
@@ -23,4 +18,4 @@ type Outlet = {
     status: string;
 };
 
-export type { BusinessContext, Option, Outlet };
+export type { Business, Outlet };

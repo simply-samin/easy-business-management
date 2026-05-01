@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Concerns;
+namespace App\Http\Requests;
 
 use App\Enums\AreaType;
 use App\Enums\BusinessType;
 use App\Enums\RecordStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-trait BusinessValidationRules
+class SaveBusinessRequest extends FormRequest
 {
     /**
-     * Get the validation rules used to validate businesses.
+     * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, ValidationRule|array<mixed>|string>>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
-    protected function businessRules(): array
+    public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
@@ -36,11 +37,11 @@ trait BusinessValidationRules
     }
 
     /**
-     * Get the validation messages used to validate businesses.
+     * Get custom messages for validator errors.
      *
      * @return array<string, string>
      */
-    protected function businessMessages(): array
+    public function messages(): array
     {
         return [
             'name.required' => 'Enter a business name.',
