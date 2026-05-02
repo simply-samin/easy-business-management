@@ -3,6 +3,8 @@
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\DemoTableController;
 use App\Http\Controllers\OutletController;
+use App\Http\Controllers\PartyContactPersonController;
+use App\Http\Controllers\PartyController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +24,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->scoped();
     Route::resource('product-categories', ProductCategoryController::class)->except(['show']);
     Route::resource('products', ProductController::class)->except(['show']);
+    Route::resource('parties', PartyController::class);
+    Route::resource('parties.party-contact-persons', PartyContactPersonController::class)
+        ->except(['index', 'show'])
+        ->scoped();
 });
 
 require __DIR__.'/settings.php';

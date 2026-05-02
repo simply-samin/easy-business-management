@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AreaType;
 use App\Enums\BusinessType;
 use App\Enums\RecordStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,11 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Business extends Model
 {
     use HasFactory;
-
-    public static function current(): self
-    {
-        return static::query()->firstOrFail();
-    }
 
     /**
      * The attributes that are mass assignable.
@@ -41,6 +37,17 @@ class Business extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'business_type_label',
+        'area_type_label',
+        'status_label',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -52,6 +59,21 @@ class Business extends Model
             'area_type' => AreaType::class,
             'status' => RecordStatus::class,
         ];
+    }
+
+    protected function businessTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->business_type?->label());
+    }
+
+    protected function areaTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->area_type?->label());
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
     }
 
     public function outlets(): HasMany
@@ -87,5 +109,10 @@ class Business extends Model
     public function productStocks(): HasMany
     {
         return $this->hasMany(ProductStock::class);
+    }
+
+    public static function current(): self
+    {
+        return static::query()->firstOrFail();
     }
 }

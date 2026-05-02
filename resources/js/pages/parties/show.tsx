@@ -1,41 +1,56 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
-import OutletController from '@/actions/App/Http/Controllers/OutletController';
+import PartyContactPersonController from '@/actions/App/Http/Controllers/PartyContactPersonController';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { edit as businessEdit, show as businessShow } from '@/routes/business';
 import {
-    create as outletCreate,
-    edit as outletEdit,
-} from '@/routes/businesses/outlets';
-import type { BreadcrumbItem } from '@/types';
-import type { Business, Outlet } from './types';
+    index as partyIndex,
+    edit as partyEdit,
+    show as partyShow,
+} from '@/routes/parties';
+import {
+    create as contactPersonCreate,
+    edit as contactPersonEdit,
+} from '@/routes/parties/party-contact-persons';
+import type { BreadcrumbItem, Party, PartyContactPerson } from '@/types';
 
-export default function BusinessesShow({ business }: { business: Business }) {
+type TextEntryColor = 'gray' | 'blue' | 'success' | 'danger' | 'warning';
+
+const openingBalanceTypeColors: Record<string, TextEntryColor> = {
+    receivable: 'success',
+    payable: 'danger',
+    none: 'gray',
+};
+
+export default function PartiesShow({ party }: { party: Party }) {
     const { flash } = usePage<{
         flash: { status?: string };
     }>().props;
 
-    const outlets = business.outlets ?? [];
+    const openingBalanceTypeColor =
+        openingBalanceTypeColors[party.opening_balance_type] ?? 'gray';
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Business', href: businessShow().url },
+        { title: 'Parties', href: partyIndex().url },
+        { title: party.name, href: partyShow(party.id).url },
     ];
+
+    const contactPersons = party.contact_persons ?? [];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={business.name} />
+            <Head title={party.name} />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
                     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <Heading title={business.name} />
+                        <Heading title={party.name} />
 
                         <div className="flex gap-2">
                             <Button asChild variant="outline">
-                                <Link href={businessEdit().url}>
+                                <Link href={partyEdit(party.id).url}>
                                     <Pencil className="size-4" />
                                     Edit
                                 </Link>
@@ -52,29 +67,29 @@ export default function BusinessesShow({ business }: { business: Business }) {
                     <div className="space-y-6">
                         <div>
                             <div className="mb-3 text-base font-medium">
-                                Business details
+                                Party details
                             </div>
                             <div className="space-y-3">
                                 <TextEntry
-                                    label="Business name"
-                                    value={business.name}
+                                    label="Party name"
+                                    value={party.name}
                                 />
                                 <div className="grid gap-3 md:grid-cols-2">
                                     <TextEntry
                                         label="Trade name"
-                                        value={business.trade_name}
+                                        value={party.trade_name}
                                     />
                                     <TextEntry
-                                        label="Business type"
-                                        value={business.business_type_label}
+                                        label="Party type"
+                                        value={party.party_type_label}
                                     />
                                 </div>
                                 <TextEntry
                                     label="Status"
-                                    value={business.status_label}
+                                    value={party.status_label}
                                     badge
                                     color={
-                                        business.status === 'active'
+                                        party.status === 'active'
                                             ? 'success'
                                             : 'gray'
                                     }
@@ -91,12 +106,9 @@ export default function BusinessesShow({ business }: { business: Business }) {
                             <div className="grid gap-3 md:grid-cols-2">
                                 <TextEntry
                                     label="Mobile"
-                                    value={business.mobile}
+                                    value={party.mobile}
                                 />
-                                <TextEntry
-                                    label="Email"
-                                    value={business.email}
-                                />
+                                <TextEntry label="Email" value={party.email} />
                             </div>
                         </div>
 
@@ -104,23 +116,28 @@ export default function BusinessesShow({ business }: { business: Business }) {
 
                         <div>
                             <div className="mb-3 text-base font-medium">
-                                Registration
+                                Financials
                             </div>
                             <div className="space-y-3">
                                 <TextEntry
-                                    label="Trade license no."
-                                    value={business.trade_license_no}
+                                    label="Opening balance type"
+                                    value={party.opening_balance_type_label}
+                                    badge
+                                    color={openingBalanceTypeColor}
                                 />
-                                <div className="grid gap-3 md:grid-cols-2">
+                                {party.opening_balance_type !== 'none' && (
                                     <TextEntry
-                                        label="TIN no."
-                                        value={business.tin_no}
+                                        label="Opening balance"
+                                        value={party.opening_balance}
                                     />
+                                )}
+                                {(party.party_type === 'customer' ||
+                                    party.party_type === 'both') && (
                                     <TextEntry
-                                        label="BIN no."
-                                        value={business.bin_no}
+                                        label="Credit limit"
+                                        value={party.credit_limit}
                                     />
-                                </div>
+                                )}
                             </div>
                         </div>
 
@@ -133,26 +150,26 @@ export default function BusinessesShow({ business }: { business: Business }) {
                             <div className="space-y-3">
                                 <TextEntry
                                     label="Address line"
-                                    value={business.address_line}
+                                    value={party.address_line}
                                 />
                                 <div className="grid gap-3 md:grid-cols-2">
                                     <TextEntry
                                         label="District"
-                                        value={business.district}
+                                        value={party.district}
                                     />
                                     <TextEntry
                                         label="Postal code"
-                                        value={business.postal_code}
+                                        value={party.postal_code}
                                     />
                                 </div>
                                 <div className="grid gap-3 md:grid-cols-2">
                                     <TextEntry
                                         label="Area type"
-                                        value={business.area_type_label}
+                                        value={party.area_type_label}
                                     />
                                     <TextEntry
                                         label="Area name"
-                                        value={business.area_name}
+                                        value={party.area_name}
                                     />
                                 </div>
                             </div>
@@ -163,27 +180,29 @@ export default function BusinessesShow({ business }: { business: Business }) {
                         <div>
                             <div className="mb-3 flex items-center justify-between">
                                 <div className="text-base font-medium">
-                                    Outlets ({outlets.length})
+                                    Contact Persons ({contactPersons.length})
                                 </div>
                                 <Button asChild size="sm">
-                                    <Link href={outletCreate(business.id).url}>
+                                    <Link
+                                        href={contactPersonCreate(party.id).url}
+                                    >
                                         <Plus className="size-4" />
-                                        New Outlet
+                                        New Contact Person
                                     </Link>
                                 </Button>
                             </div>
 
-                            {outlets.length === 0 ? (
+                            {contactPersons.length === 0 ? (
                                 <div className="py-4 text-sm text-muted-foreground">
-                                    No outlets yet.
+                                    No contact persons yet.
                                 </div>
                             ) : (
                                 <div className="divide-y">
-                                    {outlets.map((outlet) => (
-                                        <OutletListItem
-                                            key={outlet.id}
-                                            business={business}
-                                            outlet={outlet}
+                                    {contactPersons.map((contactPerson) => (
+                                        <ContactPersonListItem
+                                            key={contactPerson.id}
+                                            party={party}
+                                            contactPerson={contactPerson}
                                         />
                                     ))}
                                 </div>
@@ -196,55 +215,83 @@ export default function BusinessesShow({ business }: { business: Business }) {
     );
 }
 
-function OutletListItem({
-    business,
-    outlet,
+function ContactPersonListItem({
+    party,
+    contactPerson,
 }: {
-    business: Business;
-    outlet: Outlet;
+    party: Party;
+    contactPerson: PartyContactPerson;
 }) {
     return (
         <div className="space-y-2 py-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <span className="font-medium">{outlet.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                        ({outlet.code || 'No code'})
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                        {outlet.outlet_type_label || 'No type'}
-                    </span>
+                    <span className="font-medium">{contactPerson.name}</span>
+                    {contactPerson.designation && (
+                        <span className="text-sm text-muted-foreground">
+                            ({contactPerson.designation})
+                        </span>
+                    )}
+                    {contactPerson.is_primary && (
+                        <Badge
+                            variant="outline"
+                            className="border-transparent bg-amber-100 text-amber-800"
+                        >
+                            Primary
+                        </Badge>
+                    )}
                 </div>
                 <Badge
                     variant="outline"
                     className={
-                        outlet.status === 'active'
+                        contactPerson.status === 'active'
                             ? 'border-transparent bg-blue-100 text-blue-800'
                             : 'border-transparent bg-gray-300 text-gray-800'
                     }
                 >
-                    {outlet.status_label ?? '-'}
+                    {contactPerson.status_label ?? '-'}
                 </Badge>
             </div>
 
-            <div className="text-sm text-muted-foreground">
-                Mobile: {outlet.mobile}
+            <div className="flex gap-4 text-sm text-muted-foreground">
+                {contactPerson.mobile && (
+                    <span>Mobile: {contactPerson.mobile}</span>
+                )}
+                {contactPerson.email && (
+                    <span>Email: {contactPerson.email}</span>
+                )}
             </div>
+
+            {contactPerson.note && (
+                <div className="text-sm text-muted-foreground">
+                    Note: {contactPerson.note}
+                </div>
+            )}
 
             <div className="flex gap-2">
                 <Button size="sm" variant="outline" asChild>
-                    <Link href={outletEdit({ business, outlet }).url}>
+                    <Link
+                        href={
+                            contactPersonEdit({
+                                party,
+                                party_contact_person: contactPerson.id,
+                            }).url
+                        }
+                    >
                         <Pencil className="size-4" />
                         Edit
                     </Link>
                 </Button>
 
                 <Form
-                    action={OutletController.destroy({ business, outlet })}
+                    action={PartyContactPersonController.destroy({
+                        party,
+                        party_contact_person: contactPerson.id,
+                    })}
                     options={{ preserveScroll: true }}
                     onBefore={() =>
                         window.confirm(
-                            `Delete the outlet "${outlet.name}" from this business?`,
+                            `Delete the contact person "${contactPerson.name}" from this party?`,
                         )
                     }
                 >
@@ -275,7 +322,7 @@ function TextEntry({
     label: string;
     value: string | null | undefined;
     badge?: boolean;
-    color?: 'gray' | 'blue' | 'success' | 'danger' | 'warning';
+    color?: TextEntryColor;
 }) {
     const colorClasses: Record<string, string> = {
         gray: 'border-transparent bg-gray-100 text-gray-800',
@@ -295,7 +342,7 @@ function TextEntry({
 
     return (
         <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-            <div className="text-sm text-muted-foreground sm:w-32 sm:shrink-0">
+            <div className="text-sm text-muted-foreground sm:w-40 sm:shrink-0">
                 {label}
             </div>
             <div className="text-sm font-medium">{content}</div>

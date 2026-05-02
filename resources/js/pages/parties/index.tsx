@@ -8,9 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { create, edit, index } from '@/routes/products';
-import type { BreadcrumbItem, LengthAwarePagination } from '@/types';
-import type { Product } from './types';
+import { create, edit, index, show } from '@/routes/parties';
+import type { BreadcrumbItem, LengthAwarePagination, Party } from '@/types';
 
 type QueryString = {
     search: string | null;
@@ -18,18 +17,18 @@ type QueryString = {
     direction: 'asc' | 'desc';
 };
 
-export default function ProductsIndex({
-    products,
+export default function PartiesIndex({
+    parties,
     queryString,
 }: {
-    products: LengthAwarePagination<Product>;
+    parties: LengthAwarePagination<Party>;
     queryString: QueryString;
 }) {
     const searchTimeout = useRef<number | undefined>(undefined);
-    const reloadProps = ['products', 'queryString'];
+    const reloadProps = ['parties', 'queryString'];
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Products', href: index().url },
+        { title: 'Parties', href: index().url },
         { title: 'List', href: index().url },
     ];
 
@@ -42,20 +41,20 @@ export default function ProductsIndex({
         queryString.sort === 'name' && queryString.direction === 'asc'
             ? 'desc'
             : 'asc';
-    const hasPages = products.last_page > 1;
+    const hasPages = parties.last_page > 1;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Products" />
+            <Head title="Parties" />
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-7xl space-y-8">
                     <div className="mb-8 flex items-center justify-between">
-                        <Heading title="Products" />
+                        <Heading title="Parties" />
                         <Button asChild>
                             <Link href={create()}>
                                 <Plus />
-                                New Product
+                                New Party
                             </Link>
                         </Button>
                     </div>
@@ -66,10 +65,10 @@ export default function ProductsIndex({
                         </div>
                     )}
 
-                    {errors.product && (
+                    {errors.party && (
                         <AlertError
-                            errors={[errors.product]}
-                            title="Product deletion blocked."
+                            errors={[errors.party]}
+                            title="Party deletion blocked."
                         />
                     )}
 
@@ -80,7 +79,7 @@ export default function ProductsIndex({
                                     <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         type="search"
-                                        placeholder="Search products..."
+                                        placeholder="Search parties..."
                                         className="pl-9"
                                         defaultValue={queryString.search ?? ''}
                                         onChange={(event) => {
@@ -162,16 +161,13 @@ export default function ProductsIndex({
                                                     </Button>
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Category
+                                                    Party Type
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Business
+                                                    Mobile
                                                 </th>
                                                 <th className="h-10 px-4 text-left align-middle font-medium">
                                                     Status
-                                                </th>
-                                                <th className="h-10 px-4 text-left align-middle font-medium">
-                                                    Base Unit
                                                 </th>
                                                 <th className="h-10 px-4 text-right align-middle font-medium">
                                                     <span className="sr-only">
@@ -181,69 +177,60 @@ export default function ProductsIndex({
                                             </tr>
                                         </thead>
                                         <tbody className="[&_tr:last-child]:border-0">
-                                            {products.data.length > 0 ? (
-                                                products.data.map((product) => (
+                                            {parties.data.length > 0 ? (
+                                                parties.data.map((party) => (
                                                     <tr
-                                                        key={product.id}
+                                                        key={party.id}
                                                         className="border-b transition-colors hover:bg-muted/50"
                                                     >
                                                         <td className="px-4 py-3 align-middle">
                                                             <div className="font-medium">
-                                                                {product.name}
+                                                                {party.name}
                                                             </div>
-                                                            {(product.brand ||
-                                                                product.sku) && (
+                                                            {party.trade_name && (
                                                                 <div className="text-sm text-muted-foreground">
-                                                                    {[
-                                                                        product.brand,
-                                                                        product.sku,
-                                                                    ]
-                                                                        .filter(
-                                                                            Boolean,
-                                                                        )
-                                                                        .join(
-                                                                            ' · ',
-                                                                        )}
+                                                                    {
+                                                                        party.trade_name
+                                                                    }
                                                                 </div>
                                                             )}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
-                                                            {
-                                                                product.category
-                                                                    .name
-                                                            }
+                                                            {party.party_type_label ??
+                                                                '-'}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
-                                                            {
-                                                                product.business
-                                                                    .name
-                                                            }
+                                                            {party.mobile ??
+                                                                '-'}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
                                                             <Badge
                                                                 variant="outline"
                                                                 className={
-                                                                    product.status ===
+                                                                    party.status ===
                                                                     'active'
                                                                         ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
                                                                         : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                                                                 }
                                                             >
-                                                                {product.status_label ??
+                                                                {party.status_label ??
                                                                     '-'}
                                                             </Badge>
-                                                        </td>
-                                                        <td className="px-4 py-3 align-middle">
-                                                            {product
-                                                                .base_unit_of_measurement
-                                                                ?.name ?? '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-right align-middle">
                                                             <div className="flex justify-end gap-3">
                                                                 <Link
                                                                     className="text-primary underline-offset-4 hover:underline"
+                                                                    href={show(
+                                                                        party.id,
+                                                                    )}
+                                                                >
+                                                                    View
+                                                                </Link>
+                                                                <Link
+                                                                    className="text-primary underline-offset-4 hover:underline"
                                                                     href={edit(
-                                                                        product.id,
+                                                                        party.id,
                                                                     )}
                                                                 >
                                                                     Edit
@@ -255,12 +242,12 @@ export default function ProductsIndex({
                                             ) : (
                                                 <tr>
                                                     <td
-                                                        colSpan={6}
+                                                        colSpan={5}
                                                         className="h-24 px-4 text-center align-middle text-sm text-muted-foreground"
                                                     >
                                                         {queryString.search
-                                                            ? 'No products found.'
-                                                            : 'No products yet.'}
+                                                            ? 'No parties found.'
+                                                            : 'No parties yet.'}
                                                     </td>
                                                 </tr>
                                             )}
@@ -272,11 +259,11 @@ export default function ProductsIndex({
                             {hasPages && (
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <div className="text-sm text-muted-foreground sm:shrink-0 sm:whitespace-nowrap">
-                                        {`Showing ${products.from}-${products.to} of ${products.total} products`}
+                                        {`Showing ${parties.from}-${parties.to} of ${parties.total} parties`}
                                     </div>
 
                                     <PaginationLinks
-                                        links={products.links}
+                                        links={parties.links}
                                         only={reloadProps}
                                         className="mx-0 w-auto justify-start sm:justify-end"
                                     />

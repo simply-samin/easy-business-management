@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RecordStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,15 @@ class Product extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'status_label',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -42,6 +52,11 @@ class Product extends Model
             'status' => RecordStatus::class,
             'gsm' => 'integer',
         ];
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
     }
 
     public function business(): BelongsTo
@@ -84,13 +99,6 @@ class Product extends Model
         return $this->hasOne(ProductUnitConversion::class)->where('is_default_sale_unit', true);
     }
 
-    public function convertToBaseQuantity(float|int|string $quantity, ProductUnitConversion $conversion): string
-    {
-        $baseQuantity = (float) $quantity * (float) $conversion->conversion_factor_to_base;
-
-        return (string) $baseQuantity;
-    }
-
     public function purchaseItems(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);
@@ -104,5 +112,12 @@ class Product extends Model
     public function stocks(): HasMany
     {
         return $this->hasMany(ProductStock::class);
+    }
+
+    public function convertToBaseQuantity(float|int|string $quantity, ProductUnitConversion $conversion): string
+    {
+        $baseQuantity = (float) $quantity * (float) $conversion->conversion_factor_to_base;
+
+        return (string) $baseQuantity;
     }
 }

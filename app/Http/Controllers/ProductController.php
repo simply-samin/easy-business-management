@@ -75,9 +75,9 @@ class ProductController extends Controller
 
     public function store(SaveProductRequest $request): RedirectResponse
     {
-        Product::create($request->validated());
+        $product = Product::create($request->validated());
 
-        return to_route('products.index')
+        return to_route('products.edit', $product)
             ->with('status', 'Product created successfully.');
     }
 
@@ -103,7 +103,7 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        return to_route('products.index')
+        return to_route('products.edit', $product)
             ->with('status', 'Product updated successfully.');
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RecordStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,11 +25,25 @@ class ProductCategory extends Model
         'status',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'status_label',
+    ];
+
     protected function casts(): array
     {
         return [
             'status' => RecordStatus::class,
         ];
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
     }
 
     public function business(): BelongsTo

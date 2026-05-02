@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AreaType;
 use App\Enums\OutletType;
 use App\Enums\RecordStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,17 @@ class Outlet extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'outlet_type_label',
+        'area_type_label',
+        'status_label',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -46,6 +58,21 @@ class Outlet extends Model
             'area_type' => AreaType::class,
             'status' => RecordStatus::class,
         ];
+    }
+
+    protected function outletTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->outlet_type?->label());
+    }
+
+    protected function areaTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->area_type?->label());
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
     }
 
     public function business(): BelongsTo

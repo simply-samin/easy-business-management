@@ -26,9 +26,9 @@ class OutletController extends Controller
 
     public function store(SaveOutletRequest $request, Business $business): RedirectResponse
     {
-        $business->outlets()->create($request->validated());
+        $outlet = $business->outlets()->create($request->validated());
 
-        return to_route('business.show')
+        return to_route('businesses.outlets.edit', ['business' => $business, 'outlet' => $outlet])
             ->with('status', 'Outlet created successfully.');
     }
 
@@ -47,7 +47,7 @@ class OutletController extends Controller
     {
         $outlet->update($request->validated());
 
-        return to_route('business.show')
+        return to_route('businesses.outlets.edit', ['business' => $business, 'outlet' => $outlet])
             ->with('status', 'Outlet updated successfully.');
     }
 

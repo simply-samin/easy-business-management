@@ -12,6 +12,9 @@ type Outlet = {
     area_name: string | null;
     postal_code: string | null;
     status: string;
+    outlet_type_label: string | null;
+    area_type_label: string | null;
+    status_label: string | null;
 };
 
 type Business = {
@@ -30,6 +33,9 @@ type Business = {
     area_name: string | null;
     postal_code: string | null;
     status: string;
+    business_type_label: string | null;
+    area_type_label: string | null;
+    status_label: string | null;
     outlets_count?: number;
     outlets?: Outlet[];
 };

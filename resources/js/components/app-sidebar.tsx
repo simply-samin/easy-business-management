@@ -4,6 +4,7 @@ import {
     LayoutGrid,
     Package,
     Tags,
+    Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -22,6 +23,7 @@ import { dashboard } from '@/routes';
 import { show as businessShow } from '@/routes/business';
 import { index as productCategoryIndex } from '@/routes/product-categories';
 import { index as productIndex } from '@/routes/products';
+import { index as partyIndex } from '@/routes/parties';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -44,6 +46,11 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: productIndex(),
         icon: Package,
+    },
+    {
+        title: 'Parties',
+        href: partyIndex(),
+        icon: Users,
     },
 ];
 

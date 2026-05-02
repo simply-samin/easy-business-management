@@ -9,6 +9,7 @@ type ProductCategory = {
     name: string;
     description: string | null;
     status: string;
+    status_label: string | null;
     products_count?: number;
     business?: Business;
 };

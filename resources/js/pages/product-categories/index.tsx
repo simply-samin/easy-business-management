@@ -96,8 +96,7 @@ export default function ProductCategoriesIndex({
                                                             page: 1,
                                                         },
                                                         {
-                                                            preserveScroll:
-                                                                true,
+                                                            preserveScroll: true,
                                                             preserveState: true,
                                                             replace: true,
                                                             only: reloadProps,
@@ -146,9 +145,7 @@ export default function ProductCategoriesIndex({
                                                                 },
                                                             })}
                                                             preserveScroll
-                                                            only={
-                                                                reloadProps
-                                                            }
+                                                            only={reloadProps}
                                                         >
                                                             Name
                                                             <ArrowUpDown className="size-4" />
@@ -205,15 +202,8 @@ export default function ProductCategoriesIndex({
                                                                             : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                                                                     }
                                                                 >
-                                                                    {productCategory
-                                                                        .status
-                                                                        .charAt(
-                                                                            0,
-                                                                        )
-                                                                        .toUpperCase() +
-                                                                        productCategory.status.slice(
-                                                                            1,
-                                                                        )}
+                                                                    {productCategory.status_label ??
+                                                                        '-'}
                                                                 </Badge>
                                                             </td>
                                                             <td className="px-4 py-3 align-middle">

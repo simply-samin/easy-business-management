@@ -6,6 +6,7 @@ use App\Enums\AreaType;
 use App\Enums\OpeningBalanceType;
 use App\Enums\PartyType;
 use App\Enums\RecordStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Party extends Model
 {
-    /** @use HasFactory<\Database\Factories\PartyFactory> */
     use HasFactory;
 
     /**
@@ -41,6 +41,18 @@ class Party extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'party_type_label',
+        'opening_balance_type_label',
+        'area_type_label',
+        'status_label',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -57,6 +69,26 @@ class Party extends Model
         ];
     }
 
+    protected function partyTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->party_type?->label());
+    }
+
+    protected function openingBalanceTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->opening_balance_type?->label());
+    }
+
+    protected function areaTypeLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->area_type?->label());
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
+    }
+
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
@@ -65,6 +97,11 @@ class Party extends Model
     public function contactPersons(): HasMany
     {
         return $this->hasMany(PartyContactPerson::class);
+    }
+
+    public function partyContactPeople(): HasMany
+    {
+        return $this->contactPersons();
     }
 
     public function activeContactPersons(): HasMany

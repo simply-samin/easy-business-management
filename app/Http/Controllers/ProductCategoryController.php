@@ -60,9 +60,9 @@ class ProductCategoryController extends Controller
 
     public function store(SaveProductCategoryRequest $request): RedirectResponse
     {
-        ProductCategory::create($request->validated());
+        $productCategory = ProductCategory::create($request->validated());
 
-        return to_route('product-categories.index')
+        return to_route('product-categories.edit', $productCategory)
             ->with('status', 'Product category created successfully.');
     }
 
@@ -78,7 +78,7 @@ class ProductCategoryController extends Controller
     {
         $productCategory->update($request->validated());
 
-        return to_route('product-categories.index')
+        return to_route('product-categories.edit', $productCategory)
             ->with('status', 'Product category updated successfully.');
     }
 
