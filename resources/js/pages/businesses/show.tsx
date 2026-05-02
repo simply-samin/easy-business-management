@@ -1,17 +1,14 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
-import BusinessController from '@/actions/App/Http/Controllers/BusinessController';
 import OutletController from '@/actions/App/Http/Controllers/OutletController';
-import AlertError from '@/components/alert-error';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import {
     edit as businessEdit,
-    index as businessIndex,
     show as businessShow,
-} from '@/routes/businesses';
+} from '@/routes/business';
 import {
     create as outletCreate,
     edit as outletEdit,
@@ -20,16 +17,14 @@ import type { BreadcrumbItem } from '@/types';
 import type { Business, Outlet } from './types';
 
 export default function BusinessesShow({ business }: { business: Business }) {
-    const { flash, errors } = usePage<{
+    const { flash } = usePage<{
         flash: { status?: string };
-        errors: Record<string, string>;
     }>().props;
 
     const outlets = business.outlets ?? [];
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: businessIndex().url },
-        { title: 'View', href: businessShow(business.id).url },
+        { title: 'Business', href: businessShow().url },
     ];
 
     return (
@@ -43,33 +38,11 @@ export default function BusinessesShow({ business }: { business: Business }) {
 
                         <div className="flex gap-2">
                             <Button asChild variant="outline">
-                                <Link href={businessEdit(business.id).url}>
+                                <Link href={businessEdit().url}>
                                     <Pencil className="size-4" />
                                     Edit
                                 </Link>
                             </Button>
-
-                            <Form
-                                action={BusinessController.destroy(business)}
-                                options={{ preserveScroll: true }}
-                                onBefore={() =>
-                                    window.confirm(
-                                        'Delete this business? This only succeeds when no outlets are attached.',
-                                    )
-                                }
-                            >
-                                {({ processing }) => (
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        disabled={processing}
-                                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                    >
-                                        <Trash2 className="size-4" />
-                                        Delete
-                                    </Button>
-                                )}
-                            </Form>
                         </div>
                     </div>
 
@@ -77,13 +50,6 @@ export default function BusinessesShow({ business }: { business: Business }) {
                         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                             {flash.status}
                         </div>
-                    )}
-
-                    {errors.business && (
-                        <AlertError
-                            errors={[errors.business]}
-                            title="Business deletion blocked."
-                        />
                     )}
 
                     <div className="space-y-6">

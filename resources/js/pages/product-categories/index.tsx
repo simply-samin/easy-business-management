@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { create, edit, index, show } from '@/routes/product-categories';
+import { create, edit, index } from '@/routes/product-categories';
 import type { BreadcrumbItem, LengthAwarePagination } from '@/types';
 import type { ProductCategory } from './types';
 
@@ -224,14 +224,6 @@ export default function ProductCategoriesIndex({
                                                                 <div className="flex justify-end gap-3">
                                                                     <Link
                                                                         className="text-primary underline-offset-4 hover:underline"
-                                                                        href={show(
-                                                                            productCategory.id,
-                                                                        )}
-                                                                    >
-                                                                        View
-                                                                    </Link>
-                                                                    <Link
-                                                                        className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                                                                         href={edit(
                                                                             productCategory.id,
                                                                         )}

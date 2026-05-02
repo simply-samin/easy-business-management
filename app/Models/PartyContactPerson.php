@@ -41,11 +41,6 @@ class PartyContactPerson extends Model
         ];
     }
 
-    /**
-     * Get the party that owns the contact person.
-     *
-     * @return BelongsTo<Party, $this>
-     */
     public function party(): BelongsTo
     {
         return $this->belongsTo(Party::class);

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductStock extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductStockFactory> */
     use HasFactory;
 
     /**
@@ -41,31 +40,16 @@ class ProductStock extends Model
         ];
     }
 
-    /**
-     * Get the business that owns the stock entry.
-     *
-     * @return BelongsTo<Business, $this>
-     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    /**
-     * Get the outlet that owns the stock entry.
-     *
-     * @return BelongsTo<Outlet, $this>
-     */
     public function outlet(): BelongsTo
     {
         return $this->belongsTo(Outlet::class);
     }
 
-    /**
-     * Get the product for the stock entry.
-     *
-     * @return BelongsTo<Product, $this>
-     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

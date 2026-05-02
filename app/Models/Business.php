@@ -11,8 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Business extends Model
 {
-    /** @use HasFactory<\Database\Factories\BusinessFactory> */
     use HasFactory;
+
+    public static function current(): self
+    {
+        return static::query()->firstOrFail();
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -50,71 +54,36 @@ class Business extends Model
         ];
     }
 
-    /**
-     * Get the outlets for the business.
-     *
-     * @return HasMany<Outlet, $this>
-     */
     public function outlets(): HasMany
     {
         return $this->hasMany(Outlet::class);
     }
 
-    /**
-     * Get the product categories for the business.
-     *
-     * @return HasMany<ProductCategory, $this>
-     */
     public function productCategories(): HasMany
     {
         return $this->hasMany(ProductCategory::class);
     }
 
-    /**
-     * Get the products for the business.
-     *
-     * @return HasMany<Product, $this>
-     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    /**
-     * Get the parties for the business.
-     *
-     * @return HasMany<Party, $this>
-     */
     public function parties(): HasMany
     {
         return $this->hasMany(Party::class);
     }
 
-    /**
-     * Get the purchases for the business.
-     *
-     * @return HasMany<Purchase, $this>
-     */
     public function purchases(): HasMany
     {
         return $this->hasMany(Purchase::class);
     }
 
-    /**
-     * Get the product stock ledgers for the business.
-     *
-     * @return HasMany<ProductStockLedger, $this>
-     */
     public function productStockLedgers(): HasMany
     {
         return $this->hasMany(ProductStockLedger::class);
     }
 
-    /**
-     * Get the product stocks for the business.
-     *
-     * @return HasMany<ProductStock, $this>
-     */
     public function productStocks(): HasMany
     {
         return $this->hasMany(ProductStock::class);

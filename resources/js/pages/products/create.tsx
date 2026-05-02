@@ -4,15 +4,13 @@ import AppLayout from '@/layouts/app-layout';
 import { create, index } from '@/routes/products';
 import type { BreadcrumbItem, Option } from '@/types';
 import ProductForm from './form';
-import type { Business, ProductCategory, UnitOfMeasurement } from './types';
+import type { ProductCategory, UnitOfMeasurement } from './types';
 
 export default function ProductsCreate({
-    businesses,
     productCategories,
     unitOfMeasurements,
     statusOptions,
 }: {
-    businesses: Business[];
     productCategories: ProductCategory[];
     unitOfMeasurements: UnitOfMeasurement[];
     statusOptions: Option[];
@@ -31,7 +29,6 @@ export default function ProductsCreate({
                     <Heading title="Create Product" className="mb-8" />
 
                     <ProductForm
-                        businesses={businesses}
                         productCategories={productCategories}
                         unitOfMeasurements={unitOfMeasurements}
                         statusOptions={statusOptions}

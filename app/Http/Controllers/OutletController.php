@@ -28,7 +28,7 @@ class OutletController extends Controller
     {
         $business->outlets()->create($request->validated());
 
-        return to_route('businesses.show', $business)
+        return to_route('business.show')
             ->with('status', 'Outlet created successfully.');
     }
 
@@ -47,7 +47,7 @@ class OutletController extends Controller
     {
         $outlet->update($request->validated());
 
-        return to_route('businesses.show', $business)
+        return to_route('business.show')
             ->with('status', 'Outlet updated successfully.');
     }
 
@@ -55,7 +55,7 @@ class OutletController extends Controller
     {
         $outlet->delete();
 
-        return to_route('businesses.show', $business)
+        return to_route('business.show')
             ->with('status', 'Outlet deleted successfully.');
     }
 }

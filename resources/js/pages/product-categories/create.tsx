@@ -2,15 +2,12 @@ import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import { create, index } from '@/routes/product-categories';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, Option } from '@/types';
 import ProductCategoryForm from './form';
-import type { Business, Option } from './types';
 
 export default function ProductCategoriesCreate({
-    businesses,
     statusOptions,
 }: {
-    businesses: Business[];
     statusOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -30,7 +27,6 @@ export default function ProductCategoriesCreate({
                     />
 
                     <ProductCategoryForm
-                        businesses={businesses}
                         statusOptions={statusOptions}
                         cancelHref={index().url}
                     />

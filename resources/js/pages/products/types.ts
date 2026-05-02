@@ -28,8 +28,8 @@ type Product = {
     sku: string | null;
     description: string | null;
     status: string;
-    business?: Business;
-    category?: ProductCategory;
+    business: Business;
+    category: ProductCategory;
     base_unit_of_measurement?: UnitOfMeasurement;
 };
 

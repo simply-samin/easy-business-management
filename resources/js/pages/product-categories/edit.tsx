@@ -1,20 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
-import { Eye } from 'lucide-react';
+import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { edit, index, show } from '@/routes/product-categories';
-import type { BreadcrumbItem } from '@/types';
+import { edit, index } from '@/routes/product-categories';
+import type { BreadcrumbItem, Option } from '@/types';
 import ProductCategoryForm from './form';
-import type { Business, Option, ProductCategory } from './types';
+import type { ProductCategory } from './types';
 
 export default function ProductCategoriesEdit({
     productCategory,
-    businesses,
     statusOptions,
 }: {
     productCategory: ProductCategory;
-    businesses: Business[];
     statusOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -28,22 +24,12 @@ export default function ProductCategoriesEdit({
 
             <div className="px-4 py-6">
                 <div className="mx-auto max-w-4xl space-y-6">
-                    <div className="mb-8 flex items-start justify-between gap-4">
-                        <Heading title="Edit Product Category" />
-
-                        <Button variant="outline" asChild>
-                            <Link href={show(productCategory.id).url}>
-                                <Eye />
-                                View
-                            </Link>
-                        </Button>
-                    </div>
+                    <Heading title="Edit Product Category" className="mb-8" />
 
                     <ProductCategoryForm
                         productCategory={productCategory}
-                        businesses={businesses}
                         statusOptions={statusOptions}
-                        cancelHref={edit(productCategory.id).url}
+                        cancelHref={index().url}
                     />
                 </div>
             </div>

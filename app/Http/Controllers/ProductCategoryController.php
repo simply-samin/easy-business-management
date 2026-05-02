@@ -16,6 +16,7 @@ class ProductCategoryController extends Controller
 {
     public function index(Request $request): Response
     {
+        $business = Business::current();
         $search = trim((string) $request->query('search', ''));
         $sort = $request->query('sort', 'created_at');
         $direction = $request->query('direction', 'desc');
@@ -31,6 +32,7 @@ class ProductCategoryController extends Controller
         $productCategories = ProductCategory::query()
             ->with('business:id,name')
             ->withCount('products')
+            ->whereBelongsTo($business)
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%");
             })
@@ -52,40 +54,22 @@ class ProductCategoryController extends Controller
     public function create(): Response
     {
         return Inertia::render('product-categories/create', [
-            'businesses' => Business::query()
-                ->orderBy('name')
-                ->get(['id', 'name']),
             'statusOptions' => RecordStatus::options(),
         ]);
     }
 
     public function store(SaveProductCategoryRequest $request): RedirectResponse
     {
-        $productCategory = ProductCategory::create($request->validated());
+        ProductCategory::create($request->validated());
 
-        return to_route('product-categories.show', $productCategory)
+        return to_route('product-categories.index')
             ->with('status', 'Product category created successfully.');
-    }
-
-    public function show(ProductCategory $productCategory): Response
-    {
-        $productCategory->load([
-            'business:id,name',
-            'products' => fn ($query) => $query->orderBy('name'),
-        ]);
-
-        return Inertia::render('product-categories/show', [
-            'productCategory' => $productCategory,
-        ]);
     }
 
     public function edit(ProductCategory $productCategory): Response
     {
         return Inertia::render('product-categories/edit', [
             'productCategory' => $productCategory,
-            'businesses' => Business::query()
-                ->orderBy('name')
-                ->get(['id', 'name']),
             'statusOptions' => RecordStatus::options(),
         ]);
     }
@@ -94,12 +78,13 @@ class ProductCategoryController extends Controller
     {
         $productCategory->update($request->validated());
 
-        return to_route('product-categories.show', $productCategory)
+        return to_route('product-categories.index')
             ->with('status', 'Product category updated successfully.');
     }
 
     public function destroy(ProductCategory $productCategory): RedirectResponse
     {
+
         if ($productCategory->products()->exists()) {
             throw ValidationException::withMessages([
                 'productCategory' => 'Delete the related products before deleting this product category.',

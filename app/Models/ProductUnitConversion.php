@@ -44,41 +44,21 @@ class ProductUnitConversion extends Model
         ];
     }
 
-    /**
-     * Get the product that owns the conversion.
-     *
-     * @return BelongsTo<Product, $this>
-     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Get the unit of measurement for the conversion.
-     *
-     * @return BelongsTo<UnitOfMeasurement, $this>
-     */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
-    /**
-     * Get the purchase items that use this conversion.
-     *
-     * @return HasMany<PurchaseItem, $this>
-     */
     public function purchaseItems(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);
     }
 
-    /**
-     * Get the product stock ledgers that use this conversion.
-     *
-     * @return HasMany<ProductStockLedger, $this>
-     */
     public function productStockLedgers(): HasMany
     {
         return $this->hasMany(ProductStockLedger::class);

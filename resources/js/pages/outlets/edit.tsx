@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
-import { index, show } from '@/routes/businesses';
+import { show as businessShow } from '@/routes/business';
 import { edit } from '@/routes/businesses/outlets';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, Option } from '@/types';
 import OutletForm from './form';
-import type { Business, Option, Outlet } from './types';
+import type { Business, Outlet } from './types';
 
 export default function OutletsEdit({
     business,
@@ -21,8 +21,7 @@ export default function OutletsEdit({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
-        { title: business.name, href: show(business.id).url },
+        { title: 'Business', href: businessShow().url },
         {
             title: 'Edit Outlet',
             href: edit({ business, outlet }).url,
@@ -43,7 +42,7 @@ export default function OutletsEdit({
                         outletTypeOptions={outletTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={show(business.id).url}
+                        cancelHref={businessShow().url}
                     />
                 </div>
             </div>

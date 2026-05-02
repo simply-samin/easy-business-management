@@ -16,29 +16,22 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import type { Option } from '@/types';
-import type { Business, Product, ProductCategory, UnitOfMeasurement } from './types';
+import type { Product, ProductCategory, UnitOfMeasurement } from './types';
 
 export default function ProductForm({
     product,
-    businesses,
     productCategories,
     unitOfMeasurements,
     statusOptions,
     cancelHref,
 }: {
     product?: Product;
-    businesses: Business[];
     productCategories: ProductCategory[];
     unitOfMeasurements: UnitOfMeasurement[];
     statusOptions: Option[];
     cancelHref: string;
 }) {
     const [status, setStatus] = useState(product?.status ?? 'active');
-
-    const businessOptions: Option[] = businesses.map((business) => ({
-        label: business.name,
-        value: business.id.toString(),
-    }));
 
     const categoryOptions: Option[] = productCategories.map((category) => ({
         label: category.name,
@@ -49,11 +42,6 @@ export default function ProductForm({
         label: unit.name,
         value: unit.id.toString(),
     }));
-
-    const selectedBusiness =
-        businessOptions.find(
-            (business) => business.value === product?.business_id?.toString(),
-        ) ?? null;
 
     const selectedCategory =
         categoryOptions.find(
@@ -80,45 +68,6 @@ export default function ProductForm({
                 <div className="space-y-6">
                     <div className="flex flex-col gap-7">
                         <div className="grid gap-4 md:grid-cols-2">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="business_id"
-                                    className="text-sm font-medium"
-                                >
-                                    Business{' '}
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <Combobox
-                                    name="business_id"
-                                    items={businessOptions}
-                                    defaultValue={selectedBusiness}
-                                    itemToStringValue={(business) => business.value}
-                                >
-                                    <ComboboxInput
-                                        id="business_id"
-                                        placeholder="Select business"
-                                        aria-invalid={Boolean(errors.business_id)}
-                                        className="w-full"
-                                    />
-                                    <ComboboxContent>
-                                        <ComboboxEmpty>
-                                            No business found.
-                                        </ComboboxEmpty>
-                                        <ComboboxList>
-                                            {(business) => (
-                                                <ComboboxItem
-                                                    key={business.value}
-                                                    value={business}
-                                                >
-                                                    {business.label}
-                                                </ComboboxItem>
-                                            )}
-                                        </ComboboxList>
-                                    </ComboboxContent>
-                                </Combobox>
-                                <InputError message={errors.business_id} />
-                            </div>
-
                             <div className="flex flex-col gap-2">
                                 <label
                                     htmlFor="product_category_id"
@@ -166,6 +115,60 @@ export default function ProductForm({
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="flex flex-col gap-2">
                                 <label
+                                    htmlFor="name"
+                                    className="text-sm font-medium"
+                                >
+                                    Product name{' '}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    defaultValue={product?.name ?? ''}
+                                    aria-invalid={Boolean(errors.name)}
+                                    placeholder="Cotton T-Shirt"
+                                />
+                                <InputError message={errors.name} />
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label
+                                    htmlFor="brand"
+                                    className="text-sm font-medium"
+                                >
+                                    Brand
+                                </label>
+                                <Input
+                                    id="brand"
+                                    name="brand"
+                                    defaultValue={product?.brand ?? ''}
+                                    aria-invalid={Boolean(errors.brand)}
+                                    placeholder="Nike"
+                                />
+                                <InputError message={errors.brand} />
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="flex flex-col gap-2">
+                                <label
+                                    htmlFor="sku"
+                                    className="text-sm font-medium"
+                                >
+                                    SKU
+                                </label>
+                                <Input
+                                    id="sku"
+                                    name="sku"
+                                    defaultValue={product?.sku ?? ''}
+                                    aria-invalid={Boolean(errors.sku)}
+                                    placeholder="SKU-001"
+                                />
+                                <InputError message={errors.sku} />
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label
                                     htmlFor="base_unit_of_measurement_id"
                                     className="text-sm font-medium"
                                 >
@@ -206,63 +209,26 @@ export default function ProductForm({
                                     message={errors.base_unit_of_measurement_id}
                                 />
                             </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="name"
-                                    className="text-sm font-medium"
-                                >
-                                    Product name{' '}
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <Input
-                                    id="name"
-                                    name="name"
-                                    defaultValue={product?.name ?? ''}
-                                    aria-invalid={Boolean(errors.name)}
-                                    placeholder="Cotton T-Shirt"
-                                />
-                                <InputError message={errors.name} />
-                            </div>
                         </div>
 
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="flex flex-col gap-2">
                                 <label
-                                    htmlFor="brand"
+                                    htmlFor="size_label"
                                     className="text-sm font-medium"
                                 >
-                                    Brand
+                                    Size Label
                                 </label>
                                 <Input
-                                    id="brand"
-                                    name="brand"
-                                    defaultValue={product?.brand ?? ''}
-                                    aria-invalid={Boolean(errors.brand)}
-                                    placeholder="Nike"
+                                    id="size_label"
+                                    name="size_label"
+                                    defaultValue={product?.size_label ?? ''}
+                                    aria-invalid={Boolean(errors.size_label)}
+                                    placeholder="M, L, XL"
                                 />
-                                <InputError message={errors.brand} />
+                                <InputError message={errors.size_label} />
                             </div>
 
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="sku"
-                                    className="text-sm font-medium"
-                                >
-                                    SKU
-                                </label>
-                                <Input
-                                    id="sku"
-                                    name="sku"
-                                    defaultValue={product?.sku ?? ''}
-                                    aria-invalid={Boolean(errors.sku)}
-                                    placeholder="SKU-001"
-                                />
-                                <InputError message={errors.sku} />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
                             <div className="flex flex-col gap-2">
                                 <label
                                     htmlFor="gsm"
@@ -279,23 +245,6 @@ export default function ProductForm({
                                     placeholder="180"
                                 />
                                 <InputError message={errors.gsm} />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="size_label"
-                                    className="text-sm font-medium"
-                                >
-                                    Size Label
-                                </label>
-                                <Input
-                                    id="size_label"
-                                    name="size_label"
-                                    defaultValue={product?.size_label ?? ''}
-                                    aria-invalid={Boolean(errors.size_label)}
-                                    placeholder="M, L, XL"
-                                />
-                                <InputError message={errors.size_label} />
                             </div>
                         </div>
 

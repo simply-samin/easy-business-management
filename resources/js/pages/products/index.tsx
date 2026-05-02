@@ -1,7 +1,6 @@
-import { Form, Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowUpDown, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { ArrowUpDown, Plus, Search } from 'lucide-react';
 import { useRef } from 'react';
-import ProductController from '@/actions/App/Http/Controllers/ProductController';
 import AlertError from '@/components/alert-error';
 import Heading from '@/components/heading';
 import PaginationLinks from '@/components/pagination-links';
@@ -209,12 +208,10 @@ export default function ProductsIndex({
                                                             )}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
-                                                            {product.category
-                                                                ?.name ?? '-'}
+                                                            {product.category.name}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
-                                                            {product.business
-                                                                ?.name ?? '-'}
+                                                            {product.business.name}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
                                                             <Badge
@@ -249,33 +246,6 @@ export default function ProductsIndex({
                                                                 >
                                                                     Edit
                                                                 </Link>
-                                                                <Form
-                                                                    action={ProductController.destroy(
-                                                                        product.id,
-                                                                    )}
-                                                                    options={{
-                                                                        preserveScroll: true,
-                                                                    }}
-                                                                    onBefore={() =>
-                                                                        window.confirm(
-                                                                            'Delete this product? This only succeeds when no purchase items or stocks are attached.',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    {({
-                                                                        processing,
-                                                                    }) => (
-                                                                        <button
-                                                                            type="submit"
-                                                                            disabled={
-                                                                                processing
-                                                                            }
-                                                                            className="text-destructive underline-offset-4 hover:underline"
-                                                                        >
-                                                                            Delete
-                                                                        </button>
-                                                                    )}
-                                                                </Form>
                                                             </div>
                                                         </td>
                                                     </tr>

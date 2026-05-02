@@ -16,11 +16,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::get('table', DemoTableController::class)->name('table');
 
-    Route::resource('businesses', BusinessController::class);
+    Route::singleton('business', BusinessController::class);
     Route::resource('businesses.outlets', OutletController::class)
         ->except(['index', 'show'])
         ->scoped();
-    Route::resource('product-categories', ProductCategoryController::class);
+    Route::resource('product-categories', ProductCategoryController::class)->except(['show']);
     Route::resource('products', ProductController::class)->except(['show']);
 });
 

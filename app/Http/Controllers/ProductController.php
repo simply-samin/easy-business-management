@@ -18,6 +18,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): Response
     {
+        $business = Business::current();
         $search = trim((string) $request->query('search', ''));
         $sort = $request->query('sort', 'created_at');
         $direction = $request->query('direction', 'desc');
@@ -32,6 +33,7 @@ class ProductController extends Controller
 
         $products = Product::query()
             ->with(['business:id,name', 'category:id,name', 'baseUnitOfMeasurement:id,name,code'])
+            ->whereBelongsTo($business)
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -56,12 +58,12 @@ class ProductController extends Controller
 
     public function create(): Response
     {
+        $business = Business::current();
+
         return Inertia::render('products/create', [
-            'businesses' => Business::query()
-                ->orderBy('name')
-                ->get(['id', 'name']),
             'productCategories' => ProductCategory::query()
                 ->with('business:id,name')
+                ->whereBelongsTo($business)
                 ->orderBy('name')
                 ->get(['id', 'business_id', 'name']),
             'unitOfMeasurements' => UnitOfMeasurement::query()
@@ -81,13 +83,13 @@ class ProductController extends Controller
 
     public function edit(Product $product): Response
     {
+        $business = Business::current();
+
         return Inertia::render('products/edit', [
             'product' => $product,
-            'businesses' => Business::query()
-                ->orderBy('name')
-                ->get(['id', 'name']),
             'productCategories' => ProductCategory::query()
                 ->with('business:id,name')
+                ->whereBelongsTo($business)
                 ->orderBy('name')
                 ->get(['id', 'business_id', 'name']),
             'unitOfMeasurements' => UnitOfMeasurement::query()

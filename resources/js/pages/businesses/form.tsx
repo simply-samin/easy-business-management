@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Option } from '@/types';
+import type { Option } from '@/types';
 import type { Business } from './types';
 
 export default function BusinessForm({
@@ -24,25 +24,19 @@ export default function BusinessForm({
     areaTypeOptions,
     cancelHref,
 }: {
-    business?: Business;
+    business: Business;
     businessTypeOptions: Option[];
     statusOptions: Option[];
     areaTypeOptions: Option[];
     cancelHref: string;
 }) {
-    const [businessType, setBusinessType] = useState(
-        business?.business_type ?? '',
-    );
-    const [status, setStatus] = useState(business?.status ?? 'active');
-    const [areaType, setAreaType] = useState(business?.area_type ?? '');
+    const [businessType, setBusinessType] = useState(business.business_type);
+    const [status, setStatus] = useState(business.status);
+    const [areaType, setAreaType] = useState(business.area_type ?? '');
 
     return (
         <Form
-            action={
-                business
-                    ? BusinessController.update(business)
-                    : BusinessController.store()
-            }
+            action={BusinessController.update()}
             options={{ preserveScroll: true }}
             disableWhileProcessing
             className="space-y-6"
@@ -65,7 +59,7 @@ export default function BusinessForm({
                                 <Input
                                     id="name"
                                     name="name"
-                                    defaultValue={business?.name ?? ''}
+                                    defaultValue={business.name}
                                     aria-invalid={Boolean(errors.name)}
                                     placeholder="Rahman Trading Co."
                                 />
@@ -83,9 +77,7 @@ export default function BusinessForm({
                                     <Input
                                         id="trade_name"
                                         name="trade_name"
-                                        defaultValue={
-                                            business?.trade_name ?? ''
-                                        }
+                                        defaultValue={business.trade_name ?? ''}
                                         aria-invalid={Boolean(
                                             errors.trade_name,
                                         )}
@@ -204,7 +196,7 @@ export default function BusinessForm({
                                 <Input
                                     id="mobile"
                                     name="mobile"
-                                    defaultValue={business?.mobile ?? ''}
+                                    defaultValue={business.mobile}
                                     aria-invalid={Boolean(errors.mobile)}
                                     placeholder="01XXXXXXXXX"
                                 />
@@ -222,7 +214,7 @@ export default function BusinessForm({
                                     id="email"
                                     name="email"
                                     type="email"
-                                    defaultValue={business?.email ?? ''}
+                                    defaultValue={business.email ?? ''}
                                     aria-invalid={Boolean(errors.email)}
                                     placeholder="hello@business.com"
                                 />
@@ -250,7 +242,7 @@ export default function BusinessForm({
                                     id="trade_license_no"
                                     name="trade_license_no"
                                     defaultValue={
-                                        business?.trade_license_no ?? ''
+                                        business.trade_license_no ?? ''
                                     }
                                     aria-invalid={Boolean(
                                         errors.trade_license_no,
@@ -270,7 +262,7 @@ export default function BusinessForm({
                                     <Input
                                         id="tin_no"
                                         name="tin_no"
-                                        defaultValue={business?.tin_no ?? ''}
+                                        defaultValue={business.tin_no ?? ''}
                                         aria-invalid={Boolean(errors.tin_no)}
                                     />
                                     <InputError message={errors.tin_no} />
@@ -286,7 +278,7 @@ export default function BusinessForm({
                                     <Input
                                         id="bin_no"
                                         name="bin_no"
-                                        defaultValue={business?.bin_no ?? ''}
+                                        defaultValue={business.bin_no ?? ''}
                                         aria-invalid={Boolean(errors.bin_no)}
                                     />
                                     <InputError message={errors.bin_no} />
@@ -313,7 +305,7 @@ export default function BusinessForm({
                                 <Textarea
                                     id="address_line"
                                     name="address_line"
-                                    defaultValue={business?.address_line ?? ''}
+                                    defaultValue={business.address_line ?? ''}
                                     aria-invalid={Boolean(errors.address_line)}
                                     placeholder="House, road, market, village or landmark"
                                     className="min-h-28 resize-none"
@@ -332,7 +324,7 @@ export default function BusinessForm({
                                     <Input
                                         id="district"
                                         name="district"
-                                        defaultValue={business?.district ?? ''}
+                                        defaultValue={business.district ?? ''}
                                         aria-invalid={Boolean(errors.district)}
                                         placeholder="Dhaka"
                                     />
@@ -349,9 +341,7 @@ export default function BusinessForm({
                                     <Input
                                         id="postal_code"
                                         name="postal_code"
-                                        defaultValue={
-                                            business?.postal_code ?? ''
-                                        }
+                                        defaultValue={business.postal_code ?? ''}
                                         aria-invalid={Boolean(
                                             errors.postal_code,
                                         )}
@@ -433,7 +423,7 @@ export default function BusinessForm({
                                     <Input
                                         id="area_name"
                                         name="area_name"
-                                        defaultValue={business?.area_name ?? ''}
+                                        defaultValue={business.area_name ?? ''}
                                         aria-invalid={Boolean(errors.area_name)}
                                         placeholder={
                                             areaType === 'thana'
@@ -456,11 +446,7 @@ export default function BusinessForm({
                         </Button>
                         <Button type="submit" disabled={processing}>
                             <Save />
-                            {processing
-                                ? 'Saving...'
-                                : business
-                                  ? 'Update Business'
-                                  : 'Create Business'}
+                            {processing ? 'Saving...' : 'Update Business'}
                         </Button>
                     </div>
                 </div>

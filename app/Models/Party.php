@@ -57,51 +57,26 @@ class Party extends Model
         ];
     }
 
-    /**
-     * Get the business that owns the party.
-     *
-     * @return BelongsTo<Business, $this>
-     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    /**
-     * Get the contact persons for the party.
-     *
-     * @return HasMany<PartyContactPerson, $this>
-     */
     public function contactPersons(): HasMany
     {
         return $this->hasMany(PartyContactPerson::class);
     }
 
-    /**
-     * Get the active contact persons for the party.
-     *
-     * @return HasMany<PartyContactPerson, $this>
-     */
     public function activeContactPersons(): HasMany
     {
         return $this->hasMany(PartyContactPerson::class)->where('status', 'active');
     }
 
-    /**
-     * Get the primary contact person for the party.
-     *
-     * @return HasOne<PartyContactPerson, $this>
-     */
     public function primaryContactPerson(): HasOne
     {
         return $this->hasOne(PartyContactPerson::class)->where('is_primary', true);
     }
 
-    /**
-     * Get the purchases where this party is the supplier.
-     *
-     * @return HasMany<Purchase, $this>
-     */
     public function supplierPurchases(): HasMany
     {
         return $this->hasMany(Purchase::class, 'supplier_party_id');

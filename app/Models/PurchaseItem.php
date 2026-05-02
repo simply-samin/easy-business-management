@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class PurchaseItem extends Model
 {
-    /** @use HasFactory<\Database\Factories\PurchaseItemFactory> */
     use HasFactory;
 
     /**
@@ -48,51 +47,26 @@ class PurchaseItem extends Model
         ];
     }
 
-    /**
-     * Get the purchase that owns the item.
-     *
-     * @return BelongsTo<Purchase, $this>
-     */
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(Purchase::class);
     }
 
-    /**
-     * Get the product for the item.
-     *
-     * @return BelongsTo<Product, $this>
-     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Get the unit of measurement for the item.
-     *
-     * @return BelongsTo<UnitOfMeasurement, $this>
-     */
     public function unitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class);
     }
 
-    /**
-     * Get the product unit conversion for the item.
-     *
-     * @return BelongsTo<ProductUnitConversion, $this>
-     */
     public function productUnitConversion(): BelongsTo
     {
         return $this->belongsTo(ProductUnitConversion::class);
     }
 
-    /**
-     * Get the product stock ledgers that reference this purchase item.
-     *
-     * @return MorphMany<ProductStockLedger, $this>
-     */
     public function productStockLedgers(): MorphMany
     {
         return $this->morphMany(ProductStockLedger::class, 'source');

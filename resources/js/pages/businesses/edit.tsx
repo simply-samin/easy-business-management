@@ -3,10 +3,9 @@ import { Eye } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { edit, index, show } from '@/routes/businesses';
-import type { BreadcrumbItem } from '@/types';
+import { edit, show } from '@/routes/business';
+import type { BreadcrumbItem, Option } from '@/types';
 import BusinessForm from './form';
-import { Option } from '@/types';
 import type { Business } from './types';
 
 export default function BusinessesEdit({
@@ -21,8 +20,8 @@ export default function BusinessesEdit({
     areaTypeOptions: Option[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Businesses', href: index().url },
-        { title: 'Edit', href: edit(business.id).url },
+        { title: 'Business', href: show().url },
+        { title: 'Edit', href: edit().url },
     ];
 
     return (
@@ -35,7 +34,7 @@ export default function BusinessesEdit({
                         <Heading title="Edit Business" />
 
                         <Button variant="outline" asChild>
-                            <Link href={show(business.id).url}>
+                            <Link href={show().url}>
                                 <Eye />
                                 View
                             </Link>
@@ -47,7 +46,7 @@ export default function BusinessesEdit({
                         businessTypeOptions={businessTypeOptions}
                         statusOptions={statusOptions}
                         areaTypeOptions={areaTypeOptions}
-                        cancelHref={edit(business.id).url}
+                        cancelHref={show().url}
                     />
                 </div>
             </div>

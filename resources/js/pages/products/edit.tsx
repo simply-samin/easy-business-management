@@ -4,17 +4,15 @@ import AppLayout from '@/layouts/app-layout';
 import { edit, index } from '@/routes/products';
 import type { BreadcrumbItem, Option } from '@/types';
 import ProductForm from './form';
-import type { Business, Product, ProductCategory, UnitOfMeasurement } from './types';
+import type { Product, ProductCategory, UnitOfMeasurement } from './types';
 
 export default function ProductsEdit({
     product,
-    businesses,
     productCategories,
     unitOfMeasurements,
     statusOptions,
 }: {
     product: Product;
-    businesses: Business[];
     productCategories: ProductCategory[];
     unitOfMeasurements: UnitOfMeasurement[];
     statusOptions: Option[];
@@ -34,7 +32,6 @@ export default function ProductsEdit({
 
                     <ProductForm
                         product={product}
-                        businesses={businesses}
                         productCategories={productCategories}
                         unitOfMeasurements={unitOfMeasurements}
                         statusOptions={statusOptions}

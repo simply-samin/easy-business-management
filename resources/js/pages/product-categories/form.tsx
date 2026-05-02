@@ -1,45 +1,25 @@
 import { Form, Link } from '@inertiajs/react';
 import { Save, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import ProductCategoryController from '@/actions/App/Http/Controllers/ProductCategoryController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-} from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import type { Option } from '@/types';
-import type { Business, ProductCategory } from './types';
+import type { ProductCategory } from './types';
 
 export default function ProductCategoryForm({
     productCategory,
-    businesses,
     statusOptions,
     cancelHref,
 }: {
     productCategory?: ProductCategory;
-    businesses: Business[];
     statusOptions: Option[];
     cancelHref: string;
 }) {
     const [status, setStatus] = useState(productCategory?.status ?? 'active');
-    const businessOptions: Option[] = businesses.map((business) => ({
-        label: business.name,
-        value: business.id.toString(),
-    }));
-
-    const selectedBusiness =
-        businessOptions.find(
-            (business) =>
-                business.value === productCategory?.business_id?.toString(),
-        ) ?? null;
 
     return (
         <Form
@@ -55,44 +35,6 @@ export default function ProductCategoryForm({
             {({ errors, processing }) => (
                 <div className="space-y-6">
                     <div className="flex flex-col gap-7">
-                        <div className="flex flex-col gap-2">
-                            <label
-                                htmlFor="business_id"
-                                className="text-sm font-medium"
-                            >
-                                Business <span className="text-red-500">*</span>
-                            </label>
-                            <Combobox
-                                name="business_id"
-                                items={businessOptions}
-                                defaultValue={selectedBusiness}
-                                itemToStringValue={(business) => business.value}
-                            >
-                                <ComboboxInput
-                                    id="business_id"
-                                    placeholder="Select business"
-                                    aria-invalid={Boolean(errors.business_id)}
-                                    className="w-full"
-                                />
-                                <ComboboxContent>
-                                    <ComboboxEmpty>
-                                        No business found.
-                                    </ComboboxEmpty>
-                                    <ComboboxList>
-                                        {(business) => (
-                                            <ComboboxItem
-                                                key={business.value}
-                                                value={business}
-                                            >
-                                                {business.label}
-                                            </ComboboxItem>
-                                        )}
-                                    </ComboboxList>
-                                </ComboboxContent>
-                            </Combobox>
-                            <InputError message={errors.business_id} />
-                        </div>
-
                         <div className="flex flex-col gap-2">
                             <label
                                 htmlFor="name"

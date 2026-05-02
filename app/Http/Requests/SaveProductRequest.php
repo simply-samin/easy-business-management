@@ -3,12 +3,20 @@
 namespace App\Http\Requests;
 
 use App\Enums\RecordStatus;
+use App\Models\Business;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class SaveProductRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'business_id' => Business::current()->id,
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,7 +26,11 @@ class SaveProductRequest extends FormRequest
     {
         return [
             'business_id' => ['required', 'exists:businesses,id'],
-            'product_category_id' => ['required', 'exists:product_categories,id'],
+            'product_category_id' => [
+                'required',
+                Rule::exists('product_categories', 'id')
+                    ->where('business_id', $this->business_id),
+            ],
             'name' => ['required', 'string', 'max:255'],
             'brand' => ['nullable', 'string', 'max:255'],
             'gsm' => ['nullable', 'integer'],

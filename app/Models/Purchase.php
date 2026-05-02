@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Purchase extends Model
 {
-    /** @use HasFactory<\Database\Factories\PurchaseFactory> */
     use HasFactory;
 
     /**
@@ -61,41 +60,21 @@ class Purchase extends Model
         ];
     }
 
-    /**
-     * Get the business that owns the purchase.
-     *
-     * @return BelongsTo<Business, $this>
-     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    /**
-     * Get the outlet that owns the purchase.
-     *
-     * @return BelongsTo<Outlet, $this>
-     */
     public function outlet(): BelongsTo
     {
         return $this->belongsTo(Outlet::class);
     }
 
-    /**
-     * Get the supplier party for the purchase.
-     *
-     * @return BelongsTo<Party, $this>
-     */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Party::class, 'supplier_party_id');
     }
 
-    /**
-     * Get the items for the purchase.
-     *
-     * @return HasMany<PurchaseItem, $this>
-     */
     public function items(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);

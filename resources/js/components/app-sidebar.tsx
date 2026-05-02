@@ -1,13 +1,10 @@
 import { Link } from '@inertiajs/react';
 import {
-    BookOpen,
     BriefcaseBusiness,
-    FolderGit2,
     LayoutGrid,
     Package,
     Tags,
 } from 'lucide-react';
-import { index as businessIndex } from '@/routes/businesses';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -22,9 +19,10 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import { show as businessShow } from '@/routes/business';
 import { index as productCategoryIndex } from '@/routes/product-categories';
 import { index as productIndex } from '@/routes/products';
+import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
@@ -33,8 +31,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Businesses',
-        href: businessIndex(),
+        title: 'Business',
+        href: businessShow(),
         icon: BriefcaseBusiness,
     },
     {
@@ -46,7 +44,7 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: productIndex(),
         icon: Package,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [
