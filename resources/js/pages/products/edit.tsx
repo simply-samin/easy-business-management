@@ -5,6 +5,7 @@ import { edit, index } from '@/routes/products';
 import type { BreadcrumbItem, Option } from '@/types';
 import ProductForm from './form';
 import type { Product, ProductCategory, UnitOfMeasurement } from './types';
+import UnitConversionsTable from './unit-conversions-table';
 
 export default function ProductsEdit({
     product,
@@ -36,6 +37,12 @@ export default function ProductsEdit({
                         unitOfMeasurements={unitOfMeasurements}
                         statusOptions={statusOptions}
                         cancelHref={index().url}
+                    />
+
+                    <UnitConversionsTable
+                        product={product}
+                        unitOfMeasurements={unitOfMeasurements}
+                        statusOptions={statusOptions}
                     />
                 </div>
             </div>

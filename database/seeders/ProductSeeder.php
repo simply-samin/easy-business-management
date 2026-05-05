@@ -28,20 +28,33 @@ class ProductSeeder extends Seeder
             ->get()
             ->keyBy('code');
 
-        foreach ($this->products() as $product) {
-            Product::query()->updateOrCreate(
+        foreach ($this->products() as $productData) {
+            $product = Product::query()->updateOrCreate(
                 [
                     'business_id' => $business->id,
-                    'sku' => $product['sku'],
+                    'sku' => $productData['sku'],
                 ],
                 [
-                    'product_category_id' => $categories->get($product['category'])->id,
-                    'name' => $product['name'],
-                    'brand' => $product['brand'],
-                    'gsm' => $product['gsm'],
-                    'size_label' => $product['size_label'],
-                    'base_unit_of_measurement_id' => $units->get($product['unit'])->id,
-                    'description' => $product['description'],
+                    'product_category_id' => $categories->get($productData['category'])->id,
+                    'name' => $productData['name'],
+                    'brand' => $productData['brand'],
+                    'gsm' => $productData['gsm'],
+                    'size_label' => $productData['size_label'],
+                    'base_unit_of_measurement_id' => $units->get($productData['unit'])->id,
+                    'description' => $productData['description'],
+                    'status' => RecordStatus::Active,
+                ]
+            );
+
+            $product->unitConversions()->updateOrCreate(
+                [
+                    'unit_of_measurement_id' => $product->base_unit_of_measurement_id,
+                ],
+                [
+                    'conversion_factor_to_base' => 1,
+                    'is_base_unit' => true,
+                    'is_default_purchase_unit' => true,
+                    'is_default_sale_unit' => true,
                     'status' => RecordStatus::Active,
                 ]
             );

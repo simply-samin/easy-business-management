@@ -10,6 +10,7 @@ use App\Models\ProductCategory;
 use App\Models\UnitOfMeasurement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -75,7 +76,20 @@ class ProductController extends Controller
 
     public function store(SaveProductRequest $request): RedirectResponse
     {
-        $product = Product::create($request->validated());
+        $product = DB::transaction(function () use ($request): Product {
+            $product = Product::create($request->validated());
+
+            $product->unitConversions()->create([
+                'unit_of_measurement_id' => $product->base_unit_of_measurement_id,
+                'conversion_factor_to_base' => 1,
+                'is_base_unit' => true,
+                'is_default_purchase_unit' => true,
+                'is_default_sale_unit' => true,
+                'status' => 'active',
+            ]);
+
+            return $product;
+        });
 
         return to_route('products.edit', $product)
             ->with('status', 'Product created successfully.');
@@ -84,6 +98,10 @@ class ProductController extends Controller
     public function edit(Product $product): Response
     {
         $business = Business::current();
+        $product->load([
+            'baseUnitOfMeasurement:id,name,code',
+            'unitConversions.unitOfMeasurement:id,name,code',
+        ]);
 
         return Inertia::render('products/edit', [
             'product' => $product,

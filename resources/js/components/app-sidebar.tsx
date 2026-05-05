@@ -3,6 +3,7 @@ import {
     BriefcaseBusiness,
     LayoutGrid,
     Package,
+    ShoppingCart,
     Tags,
     Users,
 } from 'lucide-react';
@@ -24,6 +25,7 @@ import { show as businessShow } from '@/routes/business';
 import { index as productCategoryIndex } from '@/routes/product-categories';
 import { index as productIndex } from '@/routes/products';
 import { index as partyIndex } from '@/routes/parties';
+import { index as purchaseIndex } from '@/routes/purchases';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -51,6 +53,11 @@ const mainNavItems: NavItem[] = [
         title: 'Parties',
         href: partyIndex(),
         icon: Users,
+    },
+    {
+        title: 'Purchases',
+        href: purchaseIndex(),
+        icon: ShoppingCart,
     },
 ];
 

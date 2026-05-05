@@ -76,7 +76,7 @@ class Product extends Model
 
     public function unitConversions(): HasMany
     {
-        return $this->hasMany(ProductUnitConversion::class);
+        return $this->hasMany(ProductUnitConversion::class)->orderBy('id');
     }
 
     public function activeUnitConversions(): HasMany

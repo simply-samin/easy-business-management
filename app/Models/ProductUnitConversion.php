@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductUnitConversion extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductUnitConversionFactory> */
     use HasFactory;
 
     /**

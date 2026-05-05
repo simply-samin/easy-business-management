@@ -7,6 +7,8 @@ use App\Http\Controllers\PartyContactPersonController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductUnitConversionController;
+use App\Http\Controllers\PurchaseController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -24,10 +26,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->scoped();
     Route::resource('product-categories', ProductCategoryController::class)->except(['show']);
     Route::resource('products', ProductController::class)->except(['show']);
+    Route::post('products/{product}/unit-conversions', [ProductUnitConversionController::class, 'store'])
+        ->name('products.unit-conversions.store');
+    Route::patch('products/{product}/unit-conversions/{product_unit_conversion}', [ProductUnitConversionController::class, 'update'])
+        ->name('products.unit-conversions.update');
+    Route::delete('products/{product}/unit-conversions/{product_unit_conversion}', [ProductUnitConversionController::class, 'destroy'])
+        ->name('products.unit-conversions.destroy');
     Route::resource('parties', PartyController::class);
     Route::resource('parties.party-contact-persons', PartyContactPersonController::class)
         ->except(['index', 'show'])
         ->scoped();
+    Route::resource('purchases', PurchaseController::class);
 });
 
 require __DIR__.'/settings.php';

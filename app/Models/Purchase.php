@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PurchasePaymentStatus;
 use App\Enums\PurchaseStatus;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class Purchase extends Model
         'business_id',
         'outlet_id',
         'supplier_party_id',
+        'user_id',
         'purchase_no',
         'purchase_date',
         'subtotal',
@@ -36,6 +38,16 @@ class Purchase extends Model
         'payment_status',
         'status',
         'note',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'payment_status_label',
+        'status_label',
     ];
 
     /**
@@ -60,6 +72,16 @@ class Purchase extends Model
         ];
     }
 
+    protected function paymentStatusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->payment_status?->label());
+    }
+
+    protected function statusLabel(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->status?->label());
+    }
+
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
@@ -73,6 +95,11 @@ class Purchase extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Party::class, 'supplier_party_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function items(): HasMany
