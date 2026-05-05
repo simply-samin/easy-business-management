@@ -263,7 +263,7 @@ export default function UnitConversionsTable({
 
                             return rowState.mode === 'edit' &&
                                 rowState.conversionId === conversion.id ? (
-                                <EditRow
+                                <InputRow
                                     key={conversion.id}
                                     conversion={conversion}
                                     baseUnitName={baseUnitName}
@@ -293,7 +293,7 @@ export default function UnitConversionsTable({
                         })}
 
                         {rowState.mode === 'create' && (
-                            <EditRow
+                            <InputRow
                                 baseUnitName={baseUnitName}
                                 availableUnitOptions={getAvailableUnitOptions()}
                                 statusOptions={statusOptions}
@@ -420,7 +420,7 @@ function DisplayRow({
     );
 }
 
-function EditRow({
+function InputRow({
     conversion,
     baseUnitName,
     availableUnitOptions,
