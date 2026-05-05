@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { Check, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import ProductUnitConversionController from '@/actions/App/Http/Controllers/ProductUnitConversionController';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
@@ -26,19 +27,19 @@ import type { Option } from '@/types';
 import type {
     Product,
     ProductUnitConversion,
-    ProductUnitConversionFormData,
+    ProductUnitConversionData,
     UnitOfMeasurement,
 } from './types';
 
-type FormMode =
+type RowState =
+    | { mode: 'display' }
     | { mode: 'create' }
-    | { mode: 'edit'; conversionId: number }
-    | null;
+    | { mode: 'edit'; conversionId: number };
 
-function createProductUnitConversionFormData(
-    productUnitConversion?: ProductUnitConversion,
-): ProductUnitConversionFormData {
-    if (!productUnitConversion) {
+function createConversionData(
+    conversion?: ProductUnitConversion,
+): ProductUnitConversionData {
+    if (!conversion) {
         return {
             unit_of_measurement_id: '',
             conversion_factor_to_base: '',
@@ -49,15 +50,13 @@ function createProductUnitConversionFormData(
     }
 
     return {
-        unit_of_measurement_id:
-            productUnitConversion.unit_of_measurement_id.toString(),
+        unit_of_measurement_id: conversion.unit_of_measurement_id.toString(),
         conversion_factor_to_base: formatFactorValue(
-            productUnitConversion.conversion_factor_to_base,
+            conversion.conversion_factor_to_base,
         ),
-        is_default_purchase_unit:
-            productUnitConversion.is_default_purchase_unit,
-        is_default_sale_unit: productUnitConversion.is_default_sale_unit,
-        status: productUnitConversion.status,
+        is_default_purchase_unit: conversion.is_default_purchase_unit,
+        is_default_sale_unit: conversion.is_default_sale_unit,
+        status: conversion.status,
     };
 }
 
@@ -96,16 +95,14 @@ export default function UnitConversionsTable({
     unitOfMeasurements: UnitOfMeasurement[];
     statusOptions: Option[];
 }) {
-    const [formMode, setFormMode] = useState<FormMode>(null);
-    const [conversionFormData, setConversionFormData] =
-        useState<ProductUnitConversionFormData>(
-            createProductUnitConversionFormData(),
-        );
+    const [rowState, setRowState] = useState<RowState>({ mode: 'display' });
+    const [conversionData, setConversionData] =
+        useState<ProductUnitConversionData>(createConversionData());
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const unitConversions = product.unit_conversions ?? [];
 
-    const baseUnitName = product.base_unit_of_measurement?.name ?? 'Base Unit';
+    const baseUnitName = product.base_unit_of_measurement.name;
 
     const baseUnitConversion =
         unitConversions.find((unitConversion) => unitConversion.is_base_unit) ??
@@ -135,36 +132,32 @@ export default function UnitConversionsTable({
                 value: unitOfMeasurement.id.toString(),
             }));
 
-    const handleCreateConversion = () => {
-        setFormMode({ mode: 'create' });
-        setConversionFormData(createProductUnitConversionFormData());
+    const handleCreate = () => {
+        setRowState({ mode: 'create' });
+        setConversionData(createConversionData());
         setErrors({});
     };
 
-    const handleEditConversion = (
-        productUnitConversion: ProductUnitConversion,
-    ) => {
-        setFormMode({
+    const handleEdit = (conversion: ProductUnitConversion) => {
+        setRowState({
             mode: 'edit',
-            conversionId: productUnitConversion.id,
+            conversionId: conversion.id,
         });
-        setConversionFormData(
-            createProductUnitConversionFormData(productUnitConversion),
-        );
+        setConversionData(createConversionData(conversion));
         setErrors({});
     };
 
-    const resetConversionFormState = () => {
-        setFormMode(null);
+    const resetRowState = () => {
+        setRowState({ mode: 'display' });
         setErrors({});
     };
 
-    const handleCancelConversion = () => {
-        resetConversionFormState();
+    const handleCancel = () => {
+        resetRowState();
     };
 
-    const handleSaveConversion = () => {
-        if (formMode === null) {
+    const handleSave = () => {
+        if (rowState.mode === 'display') {
             return;
         }
 
@@ -172,17 +165,17 @@ export default function UnitConversionsTable({
             preserveScroll: true,
             errorBag: 'productUnitConversion',
             onSuccess: () => {
-                resetConversionFormState();
+                resetRowState();
             },
             onError: (pageErrors: Record<string, string>) => {
                 setErrors(pageErrors);
             },
         };
 
-        if (formMode.mode === 'create') {
+        if (rowState.mode === 'create') {
             router.post(
                 ProductUnitConversionController.store({ product }),
-                conversionFormData,
+                conversionData,
                 visitOptions,
             );
 
@@ -192,14 +185,14 @@ export default function UnitConversionsTable({
         router.patch(
             ProductUnitConversionController.update({
                 product,
-                product_unit_conversion: formMode.conversionId,
+                product_unit_conversion: rowState.conversionId,
             }),
-            conversionFormData,
+            conversionData,
             visitOptions,
         );
     };
 
-    const handleDeleteConversion = (productUnitConversionId: number) => {
+    const handleDelete = (conversionId: number) => {
         if (
             !window.confirm(
                 'Are you sure you want to delete this unit conversion?',
@@ -211,7 +204,7 @@ export default function UnitConversionsTable({
         router.delete(
             ProductUnitConversionController.destroy({
                 product,
-                product_unit_conversion: productUnitConversionId,
+                product_unit_conversion: conversionId,
             }),
             {
                 preserveScroll: true,
@@ -264,72 +257,60 @@ export default function UnitConversionsTable({
                         </tr>
                     </thead>
                     <tbody className="[&_tr:last-child]:border-0">
-                        {unitConversions.map((productUnitConversion) => {
+                        {unitConversions.map((conversion) => {
                             const isBaseConversion =
-                                baseUnitConversion?.id ===
-                                productUnitConversion.id;
+                                baseUnitConversion?.id === conversion.id;
 
-                            return formMode?.mode === 'edit' &&
-                                formMode.conversionId ===
-                                    productUnitConversion.id ? (
-                                <ProductUnitConversionForm
-                                    key={productUnitConversion.id}
-                                    productUnitConversion={productUnitConversion}
+                            return rowState.mode === 'edit' &&
+                                rowState.conversionId === conversion.id ? (
+                                <EditRow
+                                    key={conversion.id}
+                                    conversion={conversion}
                                     baseUnitName={baseUnitName}
                                     availableUnitOptions={getAvailableUnitOptions(
-                                        productUnitConversion.unit_of_measurement_id,
+                                        conversion.unit_of_measurement_id,
                                     )}
                                     statusOptions={statusOptions}
-                                    conversionFormData={conversionFormData}
-                                    setConversionFormData={
-                                        setConversionFormData
-                                    }
+                                    conversionData={conversionData}
+                                    setConversionData={setConversionData}
                                     errors={errors}
                                     isBaseConversion={isBaseConversion}
                                     isEditMode
-                                    onCancel={handleCancelConversion}
-                                    onSave={handleSaveConversion}
+                                    onCancel={handleCancel}
+                                    onSave={handleSave}
                                 />
                             ) : (
-                                <ProductUnitConversionRow
-                                    key={productUnitConversion.id}
-                                    productUnitConversion={productUnitConversion}
+                                <DisplayRow
+                                    key={conversion.id}
+                                    conversion={conversion}
                                     baseUnitName={baseUnitName}
                                     statusOptions={statusOptions}
                                     isBaseConversion={isBaseConversion}
-                                    onEdit={() =>
-                                        handleEditConversion(
-                                            productUnitConversion,
-                                        )
-                                    }
-                                    onDelete={() =>
-                                        handleDeleteConversion(
-                                            productUnitConversion.id,
-                                        )
-                                    }
+                                    onEdit={() => handleEdit(conversion)}
+                                    onDelete={() => handleDelete(conversion.id)}
                                 />
                             );
                         })}
 
-                        {formMode?.mode === 'create' && (
-                            <ProductUnitConversionForm
+                        {rowState.mode === 'create' && (
+                            <EditRow
                                 baseUnitName={baseUnitName}
                                 availableUnitOptions={getAvailableUnitOptions()}
                                 statusOptions={statusOptions}
-                                conversionFormData={conversionFormData}
-                                setConversionFormData={setConversionFormData}
+                                conversionData={conversionData}
+                                setConversionData={setConversionData}
                                 errors={errors}
                                 isBaseConversion={false}
                                 isEditMode={false}
-                                onCancel={handleCancelConversion}
-                                onSave={handleSaveConversion}
+                                onCancel={handleCancel}
+                                onSave={handleSave}
                             />
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {!hasAlternateUnitConversions && formMode?.mode !== 'create' && (
+            {!hasAlternateUnitConversions && rowState.mode !== 'create' && (
                 <div className="text-sm text-muted-foreground">
                     No alternate units defined. Add one to use this product in
                     other quantities.
@@ -341,8 +322,8 @@ export default function UnitConversionsTable({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={handleCreateConversion}
-                    disabled={formMode !== null}
+                    onClick={handleCreate}
+                    disabled={rowState.mode !== 'display'}
                 >
                     <Plus className="size-4" />
                     Add Unit Conversion
@@ -352,15 +333,15 @@ export default function UnitConversionsTable({
     );
 }
 
-function ProductUnitConversionRow({
-    productUnitConversion,
+function DisplayRow({
+    conversion,
     baseUnitName,
     statusOptions,
     isBaseConversion,
     onEdit,
     onDelete,
 }: {
-    productUnitConversion: ProductUnitConversion;
+    conversion: ProductUnitConversion;
     baseUnitName: string;
     statusOptions: Option[];
     isBaseConversion: boolean;
@@ -369,9 +350,8 @@ function ProductUnitConversionRow({
 }) {
     const statusLabel =
         statusOptions.find(
-            (statusOption) =>
-                statusOption.value === productUnitConversion.status,
-        )?.label ?? productUnitConversion.status;
+            (statusOption) => statusOption.value === conversion.status,
+        )?.label ?? conversion.status;
 
     return (
         <tr
@@ -382,14 +362,12 @@ function ProductUnitConversionRow({
             }
         >
             <td className="px-3 py-3 align-top">
-                <div>
-                    {productUnitConversion.unit_of_measurement.name}
-                </div>
+                <div>{conversion.unit_of_measurement.name}</div>
             </td>
             <td className="px-3 py-3 align-top">
                 {formatFactorLabel(
-                    productUnitConversion.unit_of_measurement.name,
-                    productUnitConversion.conversion_factor_to_base,
+                    conversion.unit_of_measurement.name,
+                    conversion.conversion_factor_to_base,
                     baseUnitName,
                 )}
             </td>
@@ -397,16 +375,16 @@ function ProductUnitConversionRow({
                 {isBaseConversion ? 'Yes' : '-'}
             </td>
             <td className="px-3 py-3 text-center align-top">
-                {productUnitConversion.is_default_purchase_unit ? 'Yes' : '-'}
+                {conversion.is_default_purchase_unit ? 'Yes' : '-'}
             </td>
             <td className="px-3 py-3 text-center align-top">
-                {productUnitConversion.is_default_sale_unit ? 'Yes' : '-'}
+                {conversion.is_default_sale_unit ? 'Yes' : '-'}
             </td>
             <td className="px-3 py-3 align-top">
                 <Badge
                     variant="outline"
                     className={
-                        productUnitConversion.status === 'active'
+                        conversion.status === 'active'
                             ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
                             : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                     }
@@ -433,9 +411,7 @@ function ProductUnitConversionRow({
                             onClick={onDelete}
                         >
                             <Trash2 className="size-4" />
-                            <span className="sr-only">
-                                Delete conversion
-                            </span>
+                            <span className="sr-only">Delete conversion</span>
                         </Button>
                     )}
                 </div>
@@ -444,27 +420,25 @@ function ProductUnitConversionRow({
     );
 }
 
-function ProductUnitConversionForm({
-    productUnitConversion,
+function EditRow({
+    conversion,
     baseUnitName,
     availableUnitOptions,
     statusOptions,
-    conversionFormData,
-    setConversionFormData,
+    conversionData,
+    setConversionData,
     errors,
     isBaseConversion,
     isEditMode,
     onCancel,
     onSave,
 }: {
-    productUnitConversion?: ProductUnitConversion;
+    conversion?: ProductUnitConversion;
     baseUnitName: string;
     availableUnitOptions: Option[];
     statusOptions: Option[];
-    conversionFormData: ProductUnitConversionFormData;
-    setConversionFormData: Dispatch<
-        SetStateAction<ProductUnitConversionFormData>
-    >;
+    conversionData: ProductUnitConversionData;
+    setConversionData: Dispatch<SetStateAction<ProductUnitConversionData>>;
     errors: Record<string, string>;
     isBaseConversion: boolean;
     isEditMode: boolean;
@@ -473,23 +447,20 @@ function ProductUnitConversionForm({
 }) {
     const selectedUnitOption = availableUnitOptions.find(
         (unitOption) =>
-            unitOption.value === conversionFormData.unit_of_measurement_id,
+            unitOption.value === conversionData.unit_of_measurement_id,
     );
     const selectedUnitName = selectedUnitOption?.label ?? 'Selected Unit';
     const statusLabel =
         statusOptions.find(
-            (statusOption) => statusOption.value === conversionFormData.status,
-        )?.label ?? conversionFormData.status;
+            (statusOption) => statusOption.value === conversionData.status,
+        )?.label ?? conversionData.status;
 
     return (
         <tr className="border-b transition-colors hover:bg-muted/50">
             <td className="px-3 py-3 align-top">
                 {isBaseConversion ? (
                     <>
-                        <div>
-                            {productUnitConversion?.unit_of_measurement?.name ??
-                                baseUnitName}
-                        </div>
+                        <div>{conversion!.unit_of_measurement.name}</div>
                     </>
                 ) : (
                     <>
@@ -497,8 +468,8 @@ function ProductUnitConversionForm({
                             items={availableUnitOptions}
                             value={selectedUnitOption}
                             onValueChange={(unitOption) =>
-                                setConversionFormData((currentFormData) => ({
-                                    ...currentFormData,
+                                setConversionData((currentData) => ({
+                                    ...currentData,
                                     unit_of_measurement_id:
                                         unitOption?.value ?? '',
                                 }))
@@ -536,9 +507,8 @@ function ProductUnitConversionForm({
                 {isBaseConversion ? (
                     <div className="mt-2 text-sm">
                         {formatFactorLabel(
-                            productUnitConversion?.unit_of_measurement?.name ??
-                                baseUnitName,
-                            conversionFormData.conversion_factor_to_base || '1',
+                            conversion!.unit_of_measurement.name,
+                            conversionData.conversion_factor_to_base || '1',
                             baseUnitName,
                         )}
                     </div>
@@ -547,10 +517,10 @@ function ProductUnitConversionForm({
                         type="number"
                         step="0.01"
                         min="0.01"
-                        value={conversionFormData.conversion_factor_to_base}
+                        value={conversionData.conversion_factor_to_base}
                         onChange={(event) =>
-                            setConversionFormData((currentFormData) => ({
-                                ...currentFormData,
+                            setConversionData((currentData) => ({
+                                ...currentData,
                                 conversion_factor_to_base: event.target.value,
                             }))
                         }
@@ -562,7 +532,7 @@ function ProductUnitConversionForm({
                     <div className="mt-1 text-xs text-muted-foreground">
                         {formatFactorLabel(
                             selectedUnitName,
-                            conversionFormData.conversion_factor_to_base || '0',
+                            conversionData.conversion_factor_to_base || '0',
                             baseUnitName,
                         )}
                     </div>
@@ -577,10 +547,10 @@ function ProductUnitConversionForm({
             <td className="px-3 py-3 text-center align-top">
                 <div className="flex flex-col items-center gap-2">
                     <Checkbox
-                        checked={conversionFormData.is_default_purchase_unit}
+                        checked={conversionData.is_default_purchase_unit}
                         onCheckedChange={(checked) =>
-                            setConversionFormData((currentFormData) => ({
-                                ...currentFormData,
+                            setConversionData((currentData) => ({
+                                ...currentData,
                                 is_default_purchase_unit: checked === true,
                             }))
                         }
@@ -591,10 +561,10 @@ function ProductUnitConversionForm({
             <td className="px-3 py-3 text-center align-top">
                 <div className="flex flex-col items-center gap-2">
                     <Checkbox
-                        checked={conversionFormData.is_default_sale_unit}
+                        checked={conversionData.is_default_sale_unit}
                         onCheckedChange={(checked) =>
-                            setConversionFormData((currentFormData) => ({
-                                ...currentFormData,
+                            setConversionData((currentData) => ({
+                                ...currentData,
                                 is_default_sale_unit: checked === true,
                             }))
                         }
@@ -607,7 +577,7 @@ function ProductUnitConversionForm({
                     <Badge
                         variant="outline"
                         className={
-                            conversionFormData.status === 'active'
+                            conversionData.status === 'active'
                                 ? 'border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100'
                                 : 'border-transparent bg-gray-300 text-gray-800 hover:bg-gray-300'
                         }
@@ -617,10 +587,10 @@ function ProductUnitConversionForm({
                 ) : (
                     <>
                         <Select
-                            value={conversionFormData.status}
+                            value={conversionData.status}
                             onValueChange={(value) =>
-                                setConversionFormData((currentFormData) => ({
-                                    ...currentFormData,
+                                setConversionData((currentData) => ({
+                                    ...currentData,
                                     status: value,
                                 }))
                             }
