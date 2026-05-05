@@ -22,24 +22,17 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->string('name');
-            $table->string('brand')->nullable();
-            $table->unsignedSmallInteger('gsm')->nullable();
-            $table->string('size_label')->nullable();
             $table->foreignId('base_unit_of_measurement_id')
                 ->constrained('unit_of_measurements')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->string('sku')->nullable();
-            $table->text('description')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
 
-            $table->unique(['business_id', 'sku']);
             $table->index('business_id');
             $table->index('product_category_id');
-            $table->index('brand');
-            $table->index('gsm');
-            $table->index('size_label');
+            $table->index('base_unit_of_measurement_id');
+            $table->index('status');
         });
     }
 

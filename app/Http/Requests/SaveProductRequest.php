@@ -32,12 +32,7 @@ class SaveProductRequest extends FormRequest
                     ->where('business_id', $this->business_id),
             ],
             'name' => ['required', 'string', 'max:255'],
-            'brand' => ['nullable', 'string', 'max:255'],
-            'gsm' => ['nullable', 'integer'],
-            'size_label' => ['nullable', 'string', 'max:255'],
             'base_unit_of_measurement_id' => ['required', 'exists:unit_of_measurements,id'],
-            'sku' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', Rule::enum(RecordStatus::class)],
         ];
     }

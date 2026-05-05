@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
 import type { Option } from '@/types';
 import type { Product, ProductCategory, UnitOfMeasurement } from './types';
 
@@ -45,12 +44,14 @@ export default function ProductForm({
 
     const selectedCategory =
         categoryOptions.find(
-            (category) => category.value === product?.product_category_id?.toString(),
+            (category) =>
+                category.value === product?.product_category_id?.toString(),
         ) ?? null;
 
     const selectedUnit =
         unitOptions.find(
-            (unit) => unit.value === product?.base_unit_of_measurement_id?.toString(),
+            (unit) =>
+                unit.value === product?.base_unit_of_measurement_id?.toString(),
         ) ?? null;
 
     return (
@@ -66,204 +67,107 @@ export default function ProductForm({
         >
             {({ errors, processing }) => (
                 <div className="space-y-6">
-                    <div className="flex flex-col gap-7">
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="product_category_id"
-                                    className="text-sm font-medium"
-                                >
-                                    Product Category{' '}
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <Combobox
-                                    name="product_category_id"
-                                    items={categoryOptions}
-                                    defaultValue={selectedCategory}
-                                    itemToStringValue={(category) => category.value}
-                                >
-                                    <ComboboxInput
-                                        id="product_category_id"
-                                        placeholder="Select category"
-                                        aria-invalid={Boolean(
-                                            errors.product_category_id,
+                    <div className="grid gap-6 xl:grid-cols-2">
+                        <div className="flex flex-col gap-2">
+                            <label
+                                htmlFor="product_category_id"
+                                className="text-sm font-medium"
+                            >
+                                Product Category{' '}
+                                <span className="text-red-500">*</span>
+                            </label>
+                            <Combobox
+                                name="product_category_id"
+                                items={categoryOptions}
+                                defaultValue={selectedCategory}
+                                itemToStringValue={(category) => category.value}
+                            >
+                                <ComboboxInput
+                                    id="product_category_id"
+                                    placeholder="Select category"
+                                    aria-invalid={Boolean(
+                                        errors.product_category_id,
+                                    )}
+                                    className="w-full"
+                                />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>
+                                        No category found.
+                                    </ComboboxEmpty>
+                                    <ComboboxList>
+                                        {(category) => (
+                                            <ComboboxItem
+                                                key={category.value}
+                                                value={category}
+                                            >
+                                                {category.label}
+                                            </ComboboxItem>
                                         )}
-                                        className="w-full"
-                                    />
-                                    <ComboboxContent>
-                                        <ComboboxEmpty>
-                                            No category found.
-                                        </ComboboxEmpty>
-                                        <ComboboxList>
-                                            {(category) => (
-                                                <ComboboxItem
-                                                    key={category.value}
-                                                    value={category}
-                                                >
-                                                    {category.label}
-                                                </ComboboxItem>
-                                            )}
-                                        </ComboboxList>
-                                    </ComboboxContent>
-                                </Combobox>
-                                <InputError
-                                    message={errors.product_category_id}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="name"
-                                    className="text-sm font-medium"
-                                >
-                                    Product name{' '}
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <Input
-                                    id="name"
-                                    name="name"
-                                    defaultValue={product?.name ?? ''}
-                                    aria-invalid={Boolean(errors.name)}
-                                    placeholder="Cotton T-Shirt"
-                                />
-                                <InputError message={errors.name} />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="brand"
-                                    className="text-sm font-medium"
-                                >
-                                    Brand
-                                </label>
-                                <Input
-                                    id="brand"
-                                    name="brand"
-                                    defaultValue={product?.brand ?? ''}
-                                    aria-invalid={Boolean(errors.brand)}
-                                    placeholder="Nike"
-                                />
-                                <InputError message={errors.brand} />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="sku"
-                                    className="text-sm font-medium"
-                                >
-                                    SKU
-                                </label>
-                                <Input
-                                    id="sku"
-                                    name="sku"
-                                    defaultValue={product?.sku ?? ''}
-                                    aria-invalid={Boolean(errors.sku)}
-                                    placeholder="SKU-001"
-                                />
-                                <InputError message={errors.sku} />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="base_unit_of_measurement_id"
-                                    className="text-sm font-medium"
-                                >
-                                    Base Unit of Measurement{' '}
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <Combobox
-                                    name="base_unit_of_measurement_id"
-                                    items={unitOptions}
-                                    defaultValue={selectedUnit}
-                                    itemToStringValue={(unit) => unit.value}
-                                >
-                                    <ComboboxInput
-                                        id="base_unit_of_measurement_id"
-                                        placeholder="Select unit"
-                                        aria-invalid={Boolean(
-                                            errors.base_unit_of_measurement_id,
-                                        )}
-                                        className="w-full"
-                                    />
-                                    <ComboboxContent>
-                                        <ComboboxEmpty>
-                                            No unit found.
-                                        </ComboboxEmpty>
-                                        <ComboboxList>
-                                            {(unit) => (
-                                                <ComboboxItem
-                                                    key={unit.value}
-                                                    value={unit}
-                                                >
-                                                    {unit.label}
-                                                </ComboboxItem>
-                                            )}
-                                        </ComboboxList>
-                                    </ComboboxContent>
-                                </Combobox>
-                                <InputError
-                                    message={errors.base_unit_of_measurement_id}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="size_label"
-                                    className="text-sm font-medium"
-                                >
-                                    Size Label
-                                </label>
-                                <Input
-                                    id="size_label"
-                                    name="size_label"
-                                    defaultValue={product?.size_label ?? ''}
-                                    aria-invalid={Boolean(errors.size_label)}
-                                    placeholder="M, L, XL"
-                                />
-                                <InputError message={errors.size_label} />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <label
-                                    htmlFor="gsm"
-                                    className="text-sm font-medium"
-                                >
-                                    GSM
-                                </label>
-                                <Input
-                                    id="gsm"
-                                    name="gsm"
-                                    type="number"
-                                    defaultValue={product?.gsm ?? ''}
-                                    aria-invalid={Boolean(errors.gsm)}
-                                    placeholder="180"
-                                />
-                                <InputError message={errors.gsm} />
-                            </div>
+                                    </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            <InputError message={errors.product_category_id} />
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <label
-                                htmlFor="description"
+                                htmlFor="base_unit_of_measurement_id"
                                 className="text-sm font-medium"
                             >
-                                Description
+                                Base Unit of Measurement{' '}
+                                <span className="text-red-500">*</span>
                             </label>
-                            <Textarea
-                                id="description"
-                                name="description"
-                                defaultValue={product?.description ?? ''}
-                                aria-invalid={Boolean(errors.description)}
-                                placeholder="Brief description of this product"
-                                className="min-h-24 resize-none"
+                            <Combobox
+                                name="base_unit_of_measurement_id"
+                                items={unitOptions}
+                                defaultValue={selectedUnit}
+                                itemToStringValue={(unit) => unit.value}
+                            >
+                                <ComboboxInput
+                                    id="base_unit_of_measurement_id"
+                                    placeholder="Select unit"
+                                    aria-invalid={Boolean(
+                                        errors.base_unit_of_measurement_id,
+                                    )}
+                                    className="w-full"
+                                />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>
+                                        No unit found.
+                                    </ComboboxEmpty>
+                                    <ComboboxList>
+                                        {(unit) => (
+                                            <ComboboxItem
+                                                key={unit.value}
+                                                value={unit}
+                                            >
+                                                {unit.label}
+                                            </ComboboxItem>
+                                        )}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            <InputError
+                                message={errors.base_unit_of_measurement_id}
                             />
-                            <InputError message={errors.description} />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label
+                                htmlFor="name"
+                                className="text-sm font-medium"
+                            >
+                                Product name{' '}
+                                <span className="text-red-500">*</span>
+                            </label>
+                            <Input
+                                id="name"
+                                name="name"
+                                defaultValue={product?.name ?? ''}
+                                aria-invalid={Boolean(errors.name)}
+                                placeholder="Cotton T-Shirt"
+                            />
+                            <InputError message={errors.name} />
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -271,8 +175,7 @@ export default function ProductForm({
                                 htmlFor="status"
                                 className="text-sm font-medium"
                             >
-                                Status{' '}
-                                <span className="text-red-500">*</span>
+                                Status <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="hidden"
@@ -293,7 +196,9 @@ export default function ProductForm({
                                         <RadioGroupItem
                                             value={option.value}
                                             id={`status_${option.value}`}
-                                            aria-invalid={Boolean(errors.status)}
+                                            aria-invalid={Boolean(
+                                                errors.status,
+                                            )}
                                         />
                                         <label
                                             htmlFor={`status_${option.value}`}

@@ -23,12 +23,7 @@ class Product extends Model
         'business_id',
         'product_category_id',
         'name',
-        'brand',
-        'gsm',
-        'size_label',
         'base_unit_of_measurement_id',
-        'sku',
-        'description',
         'status',
     ];
 
@@ -50,7 +45,6 @@ class Product extends Model
     {
         return [
             'status' => RecordStatus::class,
-            'gsm' => 'integer',
         ];
     }
 
@@ -72,6 +66,11 @@ class Product extends Model
     public function baseUnitOfMeasurement(): BelongsTo
     {
         return $this->belongsTo(UnitOfMeasurement::class, 'base_unit_of_measurement_id');
+    }
+
+    public function productVariants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('id');
     }
 
     public function unitConversions(): HasMany

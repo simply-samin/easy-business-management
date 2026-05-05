@@ -191,21 +191,6 @@ export default function ProductsIndex({
                                                             <div className="font-medium">
                                                                 {product.name}
                                                             </div>
-                                                            {(product.brand ||
-                                                                product.sku) && (
-                                                                <div className="text-sm text-muted-foreground">
-                                                                    {[
-                                                                        product.brand,
-                                                                        product.sku,
-                                                                    ]
-                                                                        .filter(
-                                                                            Boolean,
-                                                                        )
-                                                                        .join(
-                                                                            ' · ',
-                                                                        )}
-                                                                </div>
-                                                            )}
                                                         </td>
                                                         <td className="px-4 py-3 align-middle">
                                                             {

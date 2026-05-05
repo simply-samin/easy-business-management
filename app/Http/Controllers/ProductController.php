@@ -37,9 +37,7 @@ class ProductController extends Controller
             ->whereBelongsTo($business)
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('brand', 'like', "%{$search}%")
-                        ->orWhere('sku', 'like', "%{$search}%");
+                    $q->where('name', 'like', "%{$search}%");
                 });
             })
             ->orderBy($sort, $direction)
